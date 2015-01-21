@@ -9,4 +9,4 @@ opencv4android, and this ugly bug confused me for nearly one day.
 
 # NDKDemo
 This project shows how to use NDK to develop native c/c++ code that invoked by jni in Android.
-Developed by opencv4android, but only use opencv c/c++ head file and libopencv_java.so library.
+Developed by opencv4android, but only use opencv c/c++ head file.
