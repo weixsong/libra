@@ -25,5 +25,6 @@ C_UPPER_DEPS :=
 SUBDIRS := \
 obj/local/armeabi-v7a/objs/native \
 obj/local/armeabi/objs/native \
+libs/armeabi \
 jni \
 

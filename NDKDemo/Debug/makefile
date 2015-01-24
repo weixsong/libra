@@ -10,6 +10,7 @@ RM := rm -rf
 -include sources.mk
 -include obj/local/armeabi/objs/native/subdir.mk
 -include obj/local/armeabi-v7a/objs/native/subdir.mk
+-include libs/armeabi/subdir.mk
 -include jni/subdir.mk
 -include subdir.mk
 -include objects.mk
