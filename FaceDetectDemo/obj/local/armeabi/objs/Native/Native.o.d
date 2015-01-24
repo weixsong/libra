@@ -1,5 +1,5 @@
-/home/songwei/workspace/FaceDetectDemo/obj/local/armeabi/objs/Native/Native.o: \
- /home/songwei/workspace/FaceDetectDemo/jni/Native.cpp \
+/home/songwei/WeiSONG/pisces/libra/FaceDetectDemo/obj/local/armeabi/objs/Native/Native.o: \
+ /home/songwei/WeiSONG/pisces/libra/FaceDetectDemo/jni/Native.cpp \
  /home/songwei/Softwares/android-ndk-r10d/platforms/android-19/arch-arm/usr/include/jni.h \
  /home/songwei/Softwares/android-ndk-r10d/platforms/android-19/arch-arm/usr/include/sys/cdefs.h \
  /home/songwei/Softwares/android-ndk-r10d/platforms/android-19/arch-arm/usr/include/sys/cdefs_elf.h \
@@ -66,7 +66,7 @@
  /home/songwei/Softwares/android-ndk-r10d/sources/cxx-stl/gnu-libstdc++/4.8/include/valarray \
  /home/songwei/Softwares/OpenCV-2.4.10-android-sdk/sdk/native/jni/include/opencv2/contrib/openfabmap.hpp \
  /home/songwei/Softwares/android-ndk-r10d/sources/cxx-stl/gnu-libstdc++/4.8/include/set \
- /home/songwei/workspace/FaceDetectDemo/jni/./stasm/stasm_lib.h
+ /home/songwei/WeiSONG/pisces/libra/FaceDetectDemo/jni/./stasm/stasm_lib.h
 
 /home/songwei/Softwares/android-ndk-r10d/platforms/android-19/arch-arm/usr/include/jni.h:
 
@@ -200,4 +200,4 @@
 
 /home/songwei/Softwares/android-ndk-r10d/sources/cxx-stl/gnu-libstdc++/4.8/include/set:
 
-/home/songwei/workspace/FaceDetectDemo/jni/./stasm/stasm_lib.h:
+/home/songwei/WeiSONG/pisces/libra/FaceDetectDemo/jni/./stasm/stasm_lib.h:
