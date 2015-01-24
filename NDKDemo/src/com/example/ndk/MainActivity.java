@@ -19,7 +19,7 @@ public class MainActivity extends Activity {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-		this.setTitle("使用NDK转换灰度图");
+		this.setTitle("convert to gray by NDK");
 		btnRestore = (Button) this.findViewById(R.id.btnRestore);
 		btnRestore.setOnClickListener(new ClickEvent());
 		btnNDK = (Button) this.findViewById(R.id.btnNDK);
@@ -44,10 +44,7 @@ public class MainActivity extends Activity {
 				resultImg.setPixels(resultInt, 0, w, 0, 0, w, h);
 				long performance = System.currentTimeMillis() - current;
 				imgView.setImageBitmap(resultImg);
-				MainActivity.this.setTitle("w:"
-						+ String.valueOf(img1.getWidth()) + ",h:"
-						+ String.valueOf(img1.getHeight()) + "NDK耗时"
-						+ String.valueOf(performance) + " 毫秒");
+				MainActivity.this.setTitle("NDK consumed: " + String.valueOf(performance) + " ms");
 			} else if (v == btnRestore) {
 				Bitmap img2 = ((BitmapDrawable) getResources().getDrawable(
 						R.drawable.lena)).getBitmap();

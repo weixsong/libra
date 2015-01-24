@@ -7,11 +7,11 @@
      <Button android:layout_height="wrap_content"    
          android:layout_width="fill_parent"    
          android:id="@+id/btnNDK"    
-         android:text="使用C++ OpenCV进行处理" />   
+         android:text="convert to gray by native c/cpp code" />   
      <Button android:layout_height="wrap_content"    
          android:layout_width="fill_parent"    
          android:id="@+id/btnRestore"    
-         android:text="还原" />    
+         android:text="restore" />    
      <ImageView android:id="@+id/ImageView01"    
      android:layout_width="fill_parent"    
      android:layout_height="fill_parent" />         
