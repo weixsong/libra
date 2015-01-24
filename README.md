@@ -10,3 +10,7 @@ opencv4android, and this ugly bug confused me for nearly one day.
 # NDKDemo
 This project shows how to use NDK to develop native c/c++ code that invoked by jni in Android.
 Developed by opencv4android, but only use opencv c/c++ head file.
+
+# ASMAndroidDemo
+This project combined native c/cpp code and opencv java SDK to do ASM points location and face detection.
+
