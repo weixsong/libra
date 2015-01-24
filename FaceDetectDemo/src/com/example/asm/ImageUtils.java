@@ -26,8 +26,6 @@ import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.CascadeClassifier;
 import org.opencv.objdetect.Objdetect;
 
-import com.example.facedetectdemo.R;
-
 /**
  * ImageUtils used to handle Image process
  * @author wei song

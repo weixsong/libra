@@ -11,8 +11,6 @@ import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 
-import com.example.facedetectdemo.R;
-
 import android.graphics.Bitmap;
 import android.graphics.PointF;
 import android.hardware.Camera;
@@ -318,8 +316,7 @@ public class MainActivity extends Activity implements PreviewCallback,
 					img.copyTo(mat);
 					img.copyTo(dst);
 					textView_info.setText("begin...");
-					int[] points = NativeCode.FindFaceLandmarks(
-							mat.getNativeObjAddr(), 1, 1);
+					int[] points = NativeImageUtil.FindFaceLandmarks(mat, 1, 1);
 					textView_info.setText("ASM DONE!");
 
 					// handle possible error

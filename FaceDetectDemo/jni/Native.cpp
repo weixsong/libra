@@ -77,10 +77,14 @@ JNIEXPORT void JNICALL Java_com_example_asm_NativeCode_FaceDetect(JNIEnv* env,
 
 /*
  *  do ASM
+ *  error code:
+ *  -1: illegal input Mat
+ *  -2: ASM initialize error
+ *  -3: no face detected
  */
 JNIEXPORT jintArray JNICALL Java_com_example_asm_NativeCode_FindFaceLandmarks(
 		JNIEnv* env, jobject, jlong matAddr, jfloat ratioW, jfloat ratioH) {
-	const char * PATH = "/data/data/com.example.asm/app_data/";
+	const char * PATH = APP_DIR.c_str();
 
 	clock_t StartTime = clock();
 	jintArray arr = env->NewIntArray(2 * stasm_NLANDMARKS);
@@ -92,7 +96,7 @@ JNIEXPORT jintArray JNICALL Java_com_example_asm_NativeCode_FindFaceLandmarks(
 	if (!img.data) {
 		out[0] = -1; // error code: -1(illegal input Mat)
 		out[1] = -1;
-		//img.release();
+		img.release();
 		env->ReleaseIntArrayElements(arr, out, 0);
 		return arr;
 	}
@@ -104,7 +108,7 @@ JNIEXPORT jintArray JNICALL Java_com_example_asm_NativeCode_FindFaceLandmarks(
 			img.cols, img.rows, " ", PATH)) {
 		out[0] = -2; // error code: -2(ASM initialize failed)
 		out[1] = -2;
-		//img.release();
+		img.release();
 		env->ReleaseIntArrayElements(arr, out, 0);
 		return arr;
 	}
@@ -112,7 +116,7 @@ JNIEXPORT jintArray JNICALL Java_com_example_asm_NativeCode_FindFaceLandmarks(
 	if (!foundface) {
 		out[0] = -3; // error code: -3(no face found)
 		out[1] = -3;
-		//img.release();
+		img.release();
 		env->ReleaseIntArrayElements(arr, out, 0);
 		return arr;
 	} else {
@@ -122,11 +126,11 @@ JNIEXPORT jintArray JNICALL Java_com_example_asm_NativeCode_FindFaceLandmarks(
 		}
 	}
 	double TotalAsmTime = double(clock() - StartTime) / CLOCKS_PER_SEC;
-	__android_log_print(ANDROID_LOG_ERROR, "com.example.asm",
+	__android_log_print(ANDROID_LOG_INFO, "com.example.asm",
 			"running in native code, \nStasm Ver:%s Img:%dx%d ---> Time:%.3f secs.", stasm_VERSION,
 			img.cols, img.rows, TotalAsmTime);
 
-	//img.release();
+	img.release();
 	env->ReleaseIntArrayElements(arr, out, 0);
 	return arr;
 }

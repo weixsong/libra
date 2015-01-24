@@ -1,12 +1,11 @@
 package com.example.asm;
 
 import org.opencv.core.Mat;
-
 import android.util.Log;
 
 public class NativeImageUtil {
 
-	private final static String TAG = "NativeImageUtil";
+	private final static String TAG = "com.example.asm";
 
 	public static Mat CannyDetect(Mat src, double threshold1,
 			double threshold2, int aperatureSize) {
