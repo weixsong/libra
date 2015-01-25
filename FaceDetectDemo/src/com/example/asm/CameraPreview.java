@@ -2,8 +2,10 @@ package com.example.asm;
 
 import java.io.IOException;
 
+import android.app.Activity;
 import android.content.Context;
 import android.hardware.Camera;
+import android.hardware.Camera.PreviewCallback;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
@@ -15,10 +17,14 @@ public class CameraPreview extends SurfaceView implements
 
 	private SurfaceHolder mHolder;
 	private Camera mCamera;
+	
+	private Context context;
+	private Activity activity;
 
 	public CameraPreview(Context context, Camera camera) {
 		super(context);
 		mCamera = camera;
+		this.context = context;
 
 		// Install a SurfaceHolder.Callback so we get notified when the
 		// underlying surface is created and destroyed.
@@ -87,6 +93,8 @@ public class CameraPreview extends SurfaceView implements
 		try {
 			mCamera.setPreviewDisplay(mHolder);
 			mCamera.setDisplayOrientation(PREVIEW_DEGREE);
+	        // set preview callback
+	        mCamera.setPreviewCallback((PreviewCallback) context);
 			mCamera.startPreview();
 
 		} catch (Exception e) {

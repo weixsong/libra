@@ -20,6 +20,7 @@ import android.os.Message;
 import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
+import android.view.SurfaceHolder;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
@@ -29,7 +30,8 @@ import android.widget.RadioButton;
 import android.widget.TextView;
 
 public class MainActivity extends Activity implements PreviewCallback {
-	private String TAG = "com.example.asm.MainActivity";
+	private final String TAG = "com.example.asm.MainActivity";
+	private final int BUFFER_SIZE = 4096;
 
 	static {
 		System.loadLibrary("opencv_java");
@@ -38,8 +40,6 @@ public class MainActivity extends Activity implements PreviewCallback {
 	private CameraPreview mPreview;
 	private TextView tv_info;
 	private Camera mCamera;
-	
-	private final int BUFFER_SIZE = 4096;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -53,11 +53,19 @@ public class MainActivity extends Activity implements PreviewCallback {
 	}
 
 	@Override
-	public void onPreviewFrame(byte[] data, Camera camera) {
-//		// TODO Auto-generated method stub
-		Log.d(TAG, "onPreviewFrame");
+	protected void onResume() {
+		Log.d(TAG, "on resume");
+		super.onResume();
+		
+        // Create an instance of Camera
+        mCamera = CameraUtils.getCameraInstance(this, Camera.CameraInfo.CAMERA_FACING_BACK);
+        
+        // Create our Preview view and set it as the content of our activity.
+        mPreview = new CameraPreview(this, mCamera);
+        FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
+        preview.addView(mPreview);
 	}
-
+	
 	@Override
 	protected void onPause() {
 		super.onPause();
@@ -83,67 +91,9 @@ public class MainActivity extends Activity implements PreviewCallback {
 	}
 
 	@Override
-	protected void onResume() {
-		Log.d(TAG, "on resume");
-		super.onResume();
-		
-        // Create an instance of Camera
-        mCamera = CameraUtils.getCameraInstance(this, Camera.CameraInfo.CAMERA_FACING_BACK);
-        
-        // Create our Preview view and set it as the content of our activity.
-        mPreview = new CameraPreview(this, mCamera);
-        FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
-        preview.addView(mPreview);
+	public void onPreviewFrame(byte[] data, Camera camera) {
+		Log.d(TAG, "onPreviewFrame");
 	}
-
-	/*
-	 * inner class for click event
-	 */
-//	class ClickEvent implements View.OnClickListener {
-//
-//		@Override
-//		public void onClick(View v) {
-//			if (v == radioButton_java) {
-//				if (v != radiogroup_language_previous) {
-//					Log.d(TAG, "java selected");
-//					radiogroup_language_previous = v;
-//
-//					mParameters.CodeType = CodeTypeEnum.JAVA;
-//				}
-//			} else if (v == radioButton_cpp) {
-//				if (v != radiogroup_language_previous) {
-//					Log.d(TAG, "cpp selected");
-//					radiogroup_language_previous = v;
-//
-//					mParameters.CodeType = CodeTypeEnum.CPP;
-//				}
-//			} else if (v == raidoButton_Canny) {
-//				if (v != radiogroup_language_previous) {
-//					Log.d(TAG, "canny selected");
-//					radiogroup_language_previous = v;
-//
-//					mParameters.CodeType = CodeTypeEnum.CANNY;
-//				}
-//			} else if (v == radioButton_backcamera) {
-//				if (v != radiogroup_camera_previous) {
-//					Log.d(TAG, "back camera selected");
-//					radiogroup_camera_previous = v;
-//
-//					mParameters.CameraID = Camera.CameraInfo.CAMERA_FACING_BACK;
-//					InitFunctions();
-//				}
-//			} else if (v == radioButton_frontcamera) {
-//				if (v != radiogroup_camera_previous) {
-//					Log.d(TAG, "front camera selected");
-//					radiogroup_camera_previous = v;
-//
-//					mParameters.CameraID = Camera.CameraInfo.CAMERA_FACING_FRONT;
-//					InitFunctions();
-//				}
-//			}
-//		}
-//	}
-	
 	
 	private void copyDataFile2LocalDir() {
 		try {
