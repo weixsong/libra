@@ -3,6 +3,7 @@ package com.example.asm;
 import java.util.List;
 import android.content.Context;
 import android.content.pm.PackageManager;
+import android.graphics.ImageFormat;
 import android.hardware.Camera;
 import android.util.Log;
 
@@ -80,6 +81,10 @@ public class CameraUtils {
         	params.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
         }
         
+        // for Mi3, only support ImageFormat.NV21
+        // for most cameras, ImageFormat.NV21 are support worldwide
+        // so use default preview format
+        //params.setPreviewFormat(ImageFormat.JPEG);
         camera.setParameters(params);
 		return true;
 	}

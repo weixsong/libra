@@ -1,12 +1,18 @@
 package com.example.asm;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 
 import android.content.Context;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.ImageFormat;
+import android.graphics.Matrix;
+import android.graphics.YuvImage;
 import android.hardware.Camera;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -60,6 +66,21 @@ public class ImageUtils {
 		
 		mYuv = new Mat(previewHeight + previewHeight / 2, previewWidth, CvType.CV_8UC1);
 		mRgba = new Mat();
+	}
+	
+	public static Bitmap yuv2bitmap(byte[] data, int width, int height) {
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		YuvImage yuvImage = new YuvImage(data, ImageFormat.NV21, width, height, null);
+		yuvImage.compressToJpeg(new android.graphics.Rect(0, 0, width, height), 100, out);
+		byte[] imageBytes = out.toByteArray();
+		Bitmap bitmap = BitmapFactory.decodeByteArray(imageBytes, 0, imageBytes.length);
+
+		// rotate
+		Matrix matrix = new Matrix();
+		matrix.postRotate(90);
+		Bitmap dst = Bitmap.createBitmap(bitmap, 0, 0, bitmap.getWidth(),
+				bitmap.getHeight(), matrix, true);
+		return dst;
 	}
 
 	public Bitmap convertBytes2Bitmap(byte[] data){

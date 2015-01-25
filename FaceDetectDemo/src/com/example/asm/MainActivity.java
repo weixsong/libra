@@ -12,8 +12,11 @@ import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Matrix;
 import android.hardware.Camera;
 import android.hardware.Camera.PreviewCallback;
+import android.hardware.Camera.Size;
 import android.os.Bundle;
 import android.os.Looper;
 import android.os.Message;
@@ -40,6 +43,10 @@ public class MainActivity extends Activity implements PreviewCallback {
 	private CameraPreview mPreview;
 	private TextView tv_info;
 	private Camera mCamera;
+	
+	private ImageView iv_canny;
+	
+	private ImageUtils imageUtils;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -48,6 +55,7 @@ public class MainActivity extends Activity implements PreviewCallback {
 		Log.d(TAG, "on Create");
 		
 		tv_info = (TextView) findViewById(R.id.text_view_info);
+		iv_canny = (ImageView) findViewById(R.id.image_view_canny);
 		
 		copyDataFile2LocalDir();
 	}
@@ -93,6 +101,10 @@ public class MainActivity extends Activity implements PreviewCallback {
 	@Override
 	public void onPreviewFrame(byte[] data, Camera camera) {
 		Log.d(TAG, "onPreviewFrame");
+
+		Size size = camera.getParameters().getPreviewSize();
+		Bitmap bitmap = ImageUtils.yuv2bitmap(data, size.width, size.height);
+		iv_canny.setImageBitmap(bitmap);
 	}
 	
 	private void copyDataFile2LocalDir() {
