@@ -6,10 +6,12 @@ import java.io.IOError;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.opencv.android.Utils;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
+import org.opencv.imgproc.Imgproc;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -104,6 +106,14 @@ public class MainActivity extends Activity implements PreviewCallback {
 
 		Size size = camera.getParameters().getPreviewSize();
 		Bitmap bitmap = ImageUtils.yuv2bitmap(data, size.width, size.height);
+		
+		// do canny
+		Mat src = new Mat();
+		Utils.bitmapToMat(bitmap, src);
+		Mat dst = new Mat();
+		Imgproc.Canny(src, dst, 50, 150);
+		Utils.matToBitmap(dst, bitmap);
+		
 		iv_canny.setImageBitmap(bitmap);
 	}
 	
