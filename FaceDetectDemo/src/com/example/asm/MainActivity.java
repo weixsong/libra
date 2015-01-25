@@ -2,6 +2,7 @@ package com.example.asm;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOError;
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -35,41 +36,10 @@ public class MainActivity extends Activity implements PreviewCallback {
 	}
 
 	private CameraPreview mPreview;
-	private ImageView mFaceRegion;
-	private ImageView mFaceASM;
-	private ImageView mCanny;
-
-	private RadioButton radioButton_java;
-	private RadioButton radioButton_cpp;
-	private RadioButton raidoButton_Canny;
-
-	private RadioButton radioButton_backcamera;
-	private RadioButton radioButton_frontcamera;
-
-	private Button button_ASM;
-
-	private View radiogroup_language_previous;
-	private View radiogroup_camera_previous;
-
-	private TextView textView_info;
-
+	private TextView tv_info;
 	private Camera mCamera;
-
-	private ImageUtils imageUtil;
-	private SystemParameters mParameters;
-
-	// cascade file
-	private File dataDir = null;
-	private File f_frontalface = null;
-	private File f_lefteye = null;
-	private File f_righteye = null;
-
-	Mat img = new Mat();
-	Mat mbmp = new Mat();
-	Mat mface = new Mat();
-
-	// used to justify if the app go to foreground by onCreate() or onResume()
-	private boolean isInit = false;
+	
+	private final int BUFFER_SIZE = 4096;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -77,99 +47,15 @@ public class MainActivity extends Activity implements PreviewCallback {
 		setContentView(R.layout.activity_main);
 		Log.d(TAG, "on Create");
 		
-
-
-//		mParameters = new SystemParameters();
-//
-////		mSurfaceView = (SurfaceView) this.findViewById(R.id.surfaceView);
-////		textView_info = (TextView) this.findViewById(R.id.textView_info);
-//		mHolder = mSurfaceView.getHolder();
-//		mHolder.addCallback(this);
-//		mHolder.setType(SurfaceHolder.SURFACE_TYPE_PUSH_BUFFERS);
-//
-//		// copy file
-//		if (!isDataFileInLocalDir(MainActivity.this)) {
-//			boolean f1, f2, f3;
-//			f1 = putDataFileInLocalDir(MainActivity.this,
-//					R.raw.haarcascade_frontalface_alt2, f_frontalface);
-//			f2 = putDataFileInLocalDir(MainActivity.this,
-//					R.raw.haarcascade_mcs_lefteye, f_lefteye);
-//			f3 = putDataFileInLocalDir(MainActivity.this,
-//					R.raw.haarcascade_mcs_righteye, f_righteye);
-//
-//			if (f1 && f2 && f2) {
-//				textView_info.setText("load cascade file successed");
-//			} else {
-//				textView_info.setText("load cascade file failed");
-//			}
-//		}
-//		// init UI
-////		InitUI();
-//
-//		// init Functions
-//		InitFunctions();
-//		isInit = true;
+		tv_info = (TextView) findViewById(R.id.text_view_info);
+		
+		copyDataFile2LocalDir();
 	}
 
 	@Override
 	public void onPreviewFrame(byte[] data, Camera camera) {
 //		// TODO Auto-generated method stub
-//		Log.d(TAG, "onPreviewFrame");
-//
-//		img = imageUtil.convertBytes2Mat(data);
-//		mbmp = new Mat();
-//		Mat mface = new Mat();
-//		Mat mcanny = new Mat();
-//		Mat masm = new Mat();
-//
-//		// need to be reconstructed
-//		if (mParameters.CodeType == CodeTypeEnum.JAVA) {
-//			// use java classifier
-//			Log.d(TAG, "process java code");
-//			textView_info.setText("using JAVA code");
-//
-//			mbmp = imageUtil.detectFacesAndExtractFace(img);
-//			mface = imageUtil.GetFaceRegion();
-//
-//		} else if (mParameters.CodeType == CodeTypeEnum.CPP) {
-//			// use c++ classifier
-//			// use native c++ code to process image
-//			Log.d(TAG, "process native c++ code: Face Detect");
-//			textView_info.setText("using native c++ code: Face Detect");
-//			
-//			mbmp = NativeImageUtil.FaceDetect(img, 1.2, 2, 30);
-//			mbmp.copyTo(mface);
-//			img.copyTo(mbmp);
-//		} else if (mParameters.CodeType == CodeTypeEnum.CANNY) {
-//			// use c++ canny
-//			// use native c++ code to canny
-//			Log.d(TAG, "process native c++ code: Canny");
-//			textView_info.setText("using native c++ code: Canny");
-//
-//			NativeImageUtil.CannyDetect(img, 50, 150, 3);
-//			mbmp.copyTo(mcanny);
-//		}
-//
-//		Bitmap bmp = imageUtil.convertMat2Bitmap(mbmp);
-//		Bitmap face = imageUtil.convertMat2Bitmap(mface);
-//		Bitmap canny = imageUtil.convertMat2Bitmap(mcanny);
-//		Bitmap asm = imageUtil.convertMat2Bitmap(masm);
-//
-//		if (bmp != null) {
-//			mPreview.setImageBitmap(bmp);
-//		}
-//
-//		if (face != null) {
-//			mFaceRegion.setImageBitmap(face);
-//		}
-//
-//		if (canny != null) {
-//			mCanny.setImageBitmap(canny);
-//		}
-//
-//		if (asm != null) {
-//			mFaceASM.setImageBitmap(asm);
-//		}
+		Log.d(TAG, "onPreviewFrame");
 	}
 
 	@Override
@@ -182,6 +68,12 @@ public class MainActivity extends Activity implements PreviewCallback {
 	protected void onStop() {
 		super.onPause();
 		Log.d(TAG, "on stop");
+		
+		if (mPreview != null) {
+        	FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
+        	preview.removeView(mPreview);
+        	mPreview = null;
+        }
 	}
 
 	@Override
@@ -198,18 +90,10 @@ public class MainActivity extends Activity implements PreviewCallback {
         // Create an instance of Camera
         mCamera = CameraUtils.getCameraInstance(this, Camera.CameraInfo.CAMERA_FACING_BACK);
         
-        if (mCamera == null) {
-        	Log.i(TAG, "&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&&");
-        }
-
         // Create our Preview view and set it as the content of our activity.
         mPreview = new CameraPreview(this, mCamera);
         FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
         preview.addView(mPreview);
-
-//		if (!isInit) {
-//			InitFunctions();
-//		}
 	}
 
 	/*
@@ -259,159 +143,41 @@ public class MainActivity extends Activity implements PreviewCallback {
 //			}
 //		}
 //	}
+	
+	
+	private void copyDataFile2LocalDir() {
+		try {
+			File dataDir = this.getDir("data", Context.MODE_PRIVATE);
+			File f_frontalface = new File(dataDir,
+					"haarcascade_frontalface_alt2.xml");
+			File f_lefteye = new File(dataDir, "haarcascade_mcs_lefteye.xml");
+			File f_righteye = new File(dataDir, "haarcascade_mcs_righteye.xml");
 
-//	private void InitUI() {
-//		getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-//
-//		mPreview = (ImageView) findViewById(R.id.imageView_cameraPreview);
-//		mFaceRegion = (ImageView) findViewById(R.id.imageView_faceregion);
-//		mFaceASM = (ImageView) findViewById(R.id.imageView_ASM);
-//		mCanny = (ImageView) findViewById(R.id.imageView_canny);
-//
-//		radioButton_java = (RadioButton) findViewById(R.id.radioButton_java);
-//		radioButton_cpp = (RadioButton) findViewById(R.id.radioButton_cpp);
-//		raidoButton_Canny = (RadioButton) findViewById(R.id.radioButton_canny);
-//		radioButton_backcamera = (RadioButton) findViewById(R.id.radioButton_backcamera);
-//		radioButton_frontcamera = (RadioButton) findViewById(R.id.radioButton_frontCamera);
-//		button_ASM = (Button) findViewById(R.id.button_ASM);
-//
-//		radioButton_java.setOnClickListener(new ClickEvent());
-//		radioButton_cpp.setOnClickListener(new ClickEvent());
-//		raidoButton_Canny.setOnClickListener(new ClickEvent());
-//		radioButton_backcamera.setOnClickListener(new ClickEvent());
-//		radioButton_frontcamera.setOnClickListener(new ClickEvent());
-//
-//		textView_info = (TextView) findViewById(R.id.textView_info);
-//
-//		radiogroup_language_previous = radioButton_java;
-//		radiogroup_camera_previous = radioButton_backcamera;
-//
-//		mPreview.setScaleType(ScaleType.CENTER_INSIDE);
-//		mFaceRegion.setScaleType(ScaleType.FIT_CENTER);
-//		mFaceASM.setScaleType(ScaleType.FIT_CENTER);
-//		mCanny.setScaleType(ScaleType.FIT_CENTER);
-//
-//		button_ASM.setOnClickListener(new View.OnClickListener() {
-//
-//			@Override
-//			public void onClick(View v) {
-//				// TODO Auto-generated method stub
-//				textView_info.setText("Doing ASM...");
-//
-//				if (img.empty() != true) {
-//					Mat dst = new Mat();
-//					Mat mat = new Mat();
-//					img.copyTo(mat);
-//					img.copyTo(dst);
-//					textView_info.setText("begin...");
-//					int[] points = NativeImageUtil.FindFaceLandmarks(mat, 1, 1);
-//					textView_info.setText("ASM DONE!");
-//
-//					// handle possible error
-//					if ((points[0] == -1) && (points[1] == -1)) {
-//						Toast.makeText(MainActivity.this, "Cannot load image",
-//								Toast.LENGTH_LONG).show();
-//					} else if ((points[0] == -2) && (points[1] == -2)) {
-//						Toast.makeText(MainActivity.this,
-//								"Error in stasm_search_single!",
-//								Toast.LENGTH_LONG).show();
-//					} else if ((points[0] == -3) && (points[1] == -3)) {
-//						Toast.makeText(MainActivity.this,
-//								"No face found in input image",
-//								Toast.LENGTH_LONG).show();
-//					} else {
-//						Toast.makeText(MainActivity.this, "ASM DONE",
-//								Toast.LENGTH_LONG).show();
-//						double[] data = { 250, 250, 250 };
-//						for (int i = 0; i < points.length / 2 - 1; i++) {
-//							// dst.put(points[2*i+1], points[2*i], data);
-//							Point p1 = new Point();
-//							p1.x = points[2 * i];
-//							p1.y = points[2 * i + 1];
-//
-//							Point p2 = new Point();
-//							p2.x = points[2 * (i + 1)];
-//							p2.y = points[2 * (i + 1) + 1];
-//							Core.line(dst, p1, p2, new Scalar(255, 255, 255), 3);
-//						}
-//						Bitmap bmp = imageUtil.convertMat2Bitmap(dst);
-//						mFaceASM.setImageBitmap(bmp);
-//					}
-//				}
-//			}
-//		});
-//
-//		int screenWidth = getWindowManager().getDefaultDisplay().getWidth();
-//		int screenHeight = getWindowManager().getDefaultDisplay().getHeight();
-//		mPreviewFrameWidth = (int) (screenWidth * (mPreviewWeight / (mPreviewWeight + mLinearLayoutBesidePreviewWeight)));
-//	}
+			if (!isDataFileInLocalDir(f_frontalface, f_lefteye, f_righteye)) {
+				boolean f1, f2, f3;
 
-//	private void InitFunctions() {
-//		SystemReset();
-//
-//		mCamera = CameraUtils.getCameraInstance(this, mParameters.CameraID);
-//		if (mCamera != null) {
-//			Log.d(TAG, "open camera successed");
-//
-//			// set preview parameters
-//			CameraUtils.setCameraPreviewParameters(mCamera, mPreviewFrameWidth);
-//			Size size = mCamera.getParameters().getPreviewSize();
-//			int w = size.width;
-//			int h = size.height;
-//
-//			imageUtil = new ImageUtils(w, h, mParameters, this);
-//
-//			// set callback
-//			mCamera.stopPreview();
-//			mCamera.setPreviewCallback(this);
-//
-//			// start preview
-//			mCamera.startPreview();
-//			textView_info.setText("Open Camera Successed");
-//		} else {
-//			if (mParameters.CameraID == Camera.CameraInfo.CAMERA_FACING_BACK) {
-//				Log.d(TAG, "open back camera failed");
-//				textView_info.setText("Open Back Camera Failed");
-//			}
-//			if (mParameters.CameraID == Camera.CameraInfo.CAMERA_FACING_FRONT) {
-//				Log.d(TAG, "open front camera failed");
-//				textView_info.setText("Open Front Camera Failed");
-//			}
-//		}
-//	}
+				f1 = putDataFileInLocalDir(MainActivity.this,
+						R.raw.haarcascade_frontalface_alt2, f_frontalface);
+				f2 = putDataFileInLocalDir(MainActivity.this,
+						R.raw.haarcascade_mcs_lefteye, f_lefteye);
+				f3 = putDataFileInLocalDir(MainActivity.this,
+						R.raw.haarcascade_mcs_righteye, f_righteye);
 
-	// reset Camera to null
-//	private void SystemReset() {
-//		if (mCamera != null) {
-//			try {
-//				mCamera.setPreviewDisplay(null);
-//			} catch (IOException e) {
-//				// TODO Auto-generated catch block
-//				e.printStackTrace();
-//			}
-//			mCamera.setPreviewCallback(null);
-//			mCamera.stopPreview();
-//			mCamera.release();
-//			mCamera = null;
-//		}
-//		mPreview.setImageBitmap(null);
-//		mFaceRegion.setImageBitmap(null);
-//		mFaceASM.setImageBitmap(null);
-//		mCanny.setImageBitmap(null);
-//		textView_info.setText("Resources reset successed!");
-//	}
+				if (f1 && f2 && f3) {
+					tv_info.setText("load cascade file successed");
+				} else {
+					tv_info.setText("load cascade file failed");
+				}
+			}
+		} catch (IOError e) {
+			e.printStackTrace();
+		}
+	}
 
-	private boolean isDataFileInLocalDir(Context context) {
+	private boolean isDataFileInLocalDir(File f_frontalface, File f_lefteye, File f_righteye) {
 		boolean ret = false;
 		try {
-			dataDir = context.getDir("data", Context.MODE_PRIVATE);
-			f_frontalface = new File(dataDir,
-					"haarcascade_frontalface_alt2.xml");
-			f_lefteye = new File(dataDir, "haarcascade_mcs_lefteye.xml");
-			f_righteye = new File(dataDir, "haarcascade_mcs_righteye.xml");
-
-			ret = f_frontalface.exists() && f_lefteye.exists()
-					&& f_righteye.exists();
+			ret = f_frontalface.exists() && f_lefteye.exists() && f_righteye.exists();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -427,7 +193,7 @@ public class MainActivity extends Activity implements PreviewCallback {
 		try {
 			InputStream is = context.getResources().openRawResource(id);
 			FileOutputStream os = new FileOutputStream(f);
-			byte[] buffer = new byte[4096];
+			byte[] buffer = new byte[BUFFER_SIZE];
 			int bytesRead;
 			while ((bytesRead = is.read(buffer)) != -1) {
 				os.write(buffer, 0, bytesRead);
@@ -436,7 +202,7 @@ public class MainActivity extends Activity implements PreviewCallback {
 			os.close();
 		} catch (IOException e) {
 			e.printStackTrace();
-			textView_info.setText("load cascade file failed");
+			tv_info.setText("load cascade file failed");
 			return false;
 		}
 		Log.d(TAG, "putDataFileInLocalDir: done!");
