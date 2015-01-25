@@ -126,7 +126,7 @@ JNIEXPORT jintArray JNICALL Java_com_example_asm_NativeCode_FindFaceLandmarks(
 		}
 	}
 	double TotalAsmTime = double(clock() - StartTime) / CLOCKS_PER_SEC;
-	__android_log_print(ANDROID_LOG_INFO, "com.example.asm",
+	__android_log_print(ANDROID_LOG_INFO, "com.example.asm.native",
 			"running in native code, \nStasm Ver:%s Img:%dx%d ---> Time:%.3f secs.", stasm_VERSION,
 			img.cols, img.rows, TotalAsmTime);
 

@@ -12,7 +12,7 @@ import android.util.Log;
  *
  */
 public class CameraUtils {
-	private static String TAG = "sw";
+	private static String TAG = "com.example.asm.CameraUtils";
 	/** A safe way to get an instance of the Camera object. */
 	public static Camera getCameraInstance(Context context, int CameraId){
 	    Camera c = null;

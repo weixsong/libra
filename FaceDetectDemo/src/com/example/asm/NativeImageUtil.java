@@ -5,7 +5,7 @@ import android.util.Log;
 
 public class NativeImageUtil {
 
-	private final static String TAG = "com.example.asm";
+	private final static String TAG = "com.example.asm.NativeImageUtil";
 
 	public static Mat CannyDetect(Mat src, double threshold1,
 			double threshold2, int aperatureSize) {
