@@ -9,7 +9,7 @@
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="0dp"
-        android:layout_weight="5"
+        android:layout_weight="4"
         android:orientation="horizontal" >
 
         <FrameLayout
@@ -27,27 +27,18 @@
             android:layout_weight="1"
             android:scaleType="centerInside"
             android:src="@android:drawable/sym_def_app_icon" />
-
     </LinearLayout>
 
     <LinearLayout
         android:layout_width="fill_parent"
         android:layout_height="0dp"
-        android:layout_weight="5" >
+        android:layout_weight="4" >
 
         <LinearLayout
             android:layout_width="0dp"
             android:layout_height="fill_parent"
             android:layout_weight="1"
             android:orientation="vertical" >
-
-            <TextView
-                android:id="@+id/text_canny"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_gravity="center"
-                android:padding="@dimen/activity_vertical_margin"
-                android:text="Canny" />
 
             <ImageView
                 android:id="@+id/image_view_canny"
@@ -65,6 +56,52 @@
             android:layout_weight="1"
             android:orientation="vertical" >
 
+            <ImageView
+                android:id="@+id/image_view_asm"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_gravity="center"
+                android:layout_marginLeft="1dp"
+                android:scaleType="centerInside"
+                android:src="@drawable/ic_launcher" />
+        </LinearLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal" >
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="5"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/text_view_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:paddingBottom="10dp"
+                android:paddingTop="10dp"
+                android:text="" />
+
+            <TextView
+                android:id="@+id/text_view_app_info"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="left"
+                android:text="ASM Android Demo@wesong" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="fill_parent"
+            android:layout_weight="2"
+            android:orientation="vertical" >
+
             <Button
                 android:id="@+id/btn_do_asm"
                 android:layout_width="wrap_content"
@@ -72,32 +109,7 @@
                 android:layout_gravity="center"
                 android:padding="@dimen/activity_vertical_margin"
                 android:text="ASM" />
-
-            <ImageView
-                android:id="@+id/image_view_asm"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:layout_gravity="center"
-                android:scaleType="centerInside"
-                android:layout_marginLeft="1dp"
-                android:src="@drawable/ic_launcher" />
         </LinearLayout>
     </LinearLayout>
-
-    <TextView
-        android:id="@+id/text_view_info"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="left"
-        android:paddingBottom="10dp"
-        android:paddingTop="10dp"
-        android:text="" />
-
-    <TextView
-        android:id="@+id/text_view_app_info"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="left"
-        android:text="ASM Android Demo@wesong" />
 
 </LinearLayout>
