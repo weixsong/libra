@@ -12,6 +12,7 @@ import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
+import org.opencv.objdetect.CascadeClassifier;
 
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -43,12 +44,12 @@ public class MainActivity extends Activity implements PreviewCallback {
 	}
 
 	private CameraPreview mPreview;
-	private TextView tv_info;
 	private Camera mCamera;
+	private CascadeClassifier mCascade;
 	
 	private ImageView iv_canny;
-	
-	private ImageUtils imageUtils;
+	private ImageView iv_face_detect_img_view;
+	private TextView tv_info;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -56,10 +57,13 @@ public class MainActivity extends Activity implements PreviewCallback {
 		setContentView(R.layout.activity_main);
 		Log.d(TAG, "on Create");
 		
+		// init cascade
+		initCascade();
+		copyDataFile2LocalDir();
+		
 		tv_info = (TextView) findViewById(R.id.text_view_info);
 		iv_canny = (ImageView) findViewById(R.id.image_view_canny);
-		
-		copyDataFile2LocalDir();
+		iv_face_detect_img_view = (ImageView) findViewById(R.id.face_detect_img_view);
 	}
 
 	@Override
@@ -106,15 +110,64 @@ public class MainActivity extends Activity implements PreviewCallback {
 
 		Size size = camera.getParameters().getPreviewSize();
 		Bitmap bitmap = ImageUtils.yuv2bitmap(data, size.width, size.height);
-		
-		// do canny
 		Mat src = new Mat();
 		Utils.bitmapToMat(bitmap, src);
-		Mat dst = new Mat();
-		Imgproc.Canny(src, dst, 50, 150);
-		Utils.matToBitmap(dst, bitmap);
 		
-		iv_canny.setImageBitmap(bitmap);
+		// do canny
+		Mat canny_mat = new Mat();
+		Imgproc.Canny(src, canny_mat, 50, 150);
+		Bitmap canny_bitmap = ImageUtils.mat2Bitmap(canny_mat);
+		
+		iv_canny.setImageBitmap(canny_bitmap);
+		
+		// do face detect
+		Mat detected = new Mat();
+		Mat face = new Mat();
+		detected = ImageUtils.detectFacesAndExtractFace(mCascade, src, face);
+		Bitmap face_detected_bitmap = ImageUtils.mat2Bitmap(detected);
+		iv_face_detect_img_view.setImageBitmap(face_detected_bitmap);
+		
+		// do asm
+	}
+	
+	/*
+	 * init the cascade
+	 */
+	private boolean initCascade() {
+		try {
+			InputStream is = this.getResources().openRawResource(
+					R.raw.haarcascade_frontalface_alt2);
+			File cascadeDir = this.getDir("cascade", Context.MODE_PRIVATE);
+			File cascadeFile = new File(cascadeDir,
+					"haarcascade_frontalface_alt2.xml");
+			FileOutputStream os = new FileOutputStream(cascadeFile);
+
+			byte[] buffer = new byte[4096];
+			int bytesRead;
+			while ((bytesRead = is.read(buffer)) != -1) {
+				os.write(buffer, 0, bytesRead);
+			}
+			is.close();
+			os.close();
+
+			mCascade = new CascadeClassifier(cascadeFile.getAbsolutePath());
+			if (mCascade.empty()) {
+				Log.e(TAG, "Failed to load cascade classifier");
+				mCascade = null;
+			} else {
+				Log.i(TAG, "Loaded cascade classifier from "
+								+ cascadeFile.getAbsolutePath());
+			}
+
+			cascadeFile.delete();
+			cascadeDir.delete();
+			return true;
+
+		} catch (IOException e) {
+			e.printStackTrace();
+			Log.e(TAG, "Failed to load cascade. Exception thrown: " + e);
+		}
+		return false;
 	}
 	
 	private void copyDataFile2LocalDir() {
