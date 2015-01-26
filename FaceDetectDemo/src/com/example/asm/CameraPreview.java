@@ -6,9 +6,12 @@ import android.app.Activity;
 import android.content.Context;
 import android.hardware.Camera;
 import android.hardware.Camera.PreviewCallback;
+import android.hardware.Camera.Size;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
+import android.view.View;
+import android.widget.FrameLayout;
 
 public class CameraPreview extends SurfaceView implements
 		SurfaceHolder.Callback {
@@ -17,9 +20,11 @@ public class CameraPreview extends SurfaceView implements
 
 	private SurfaceHolder mHolder;
 	private Camera mCamera;
-	
+
 	private Context context;
 	private Activity activity;
+	private int width;
+	private int height;
 
 	public CameraPreview(Context context, Camera camera) {
 		super(context);
@@ -50,7 +55,7 @@ public class CameraPreview extends SurfaceView implements
 				mCamera.release();
 				mCamera = null;
 			}
-		} 
+		}
 	}
 
 	public void surfaceDestroyed(SurfaceHolder holder) {
@@ -93,8 +98,8 @@ public class CameraPreview extends SurfaceView implements
 		try {
 			mCamera.setPreviewDisplay(mHolder);
 			mCamera.setDisplayOrientation(PREVIEW_DEGREE);
-	        // set preview callback
-	        mCamera.setPreviewCallback((PreviewCallback) context);
+			// set preview callback
+			mCamera.setPreviewCallback((PreviewCallback) context);
 			mCamera.startPreview();
 
 		} catch (Exception e) {
@@ -111,5 +116,25 @@ public class CameraPreview extends SurfaceView implements
 				mCamera = null;
 			}
 		}
+	}
+
+	@Override
+	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+		final int width = resolveSize(getSuggestedMinimumWidth(),
+				widthMeasureSpec);
+		final int height = resolveSize(getSuggestedMinimumHeight(),
+				heightMeasureSpec);
+		
+		Size mPreviewSize = mCamera.getParameters().getPreviewSize();
+
+		float ratio;
+		if (mPreviewSize.height >= mPreviewSize.width)
+			ratio = (float) mPreviewSize.height / (float) mPreviewSize.width;
+		else
+			ratio = (float) mPreviewSize.width / (float) mPreviewSize.height;
+
+		// One of these methods should be used, second method squishes preview
+		// slightly
+		setMeasuredDimension(width, (int) (width * ratio));
 	}
 }

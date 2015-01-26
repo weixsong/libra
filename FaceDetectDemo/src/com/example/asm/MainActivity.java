@@ -17,25 +17,21 @@ import org.opencv.imgproc.Imgproc;
 import org.opencv.objdetect.CascadeClassifier;
 
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Matrix;
 import android.hardware.Camera;
 import android.hardware.Camera.PreviewCallback;
 import android.hardware.Camera.Size;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Looper;
-import android.os.Message;
 import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
-import android.view.SurfaceHolder;
+import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
-import android.widget.RadioButton;
 import android.widget.TextView;
 
 public class MainActivity extends Activity implements PreviewCallback {
@@ -49,13 +45,13 @@ public class MainActivity extends Activity implements PreviewCallback {
 	private CameraPreview mPreview;
 	private Camera mCamera;
 	private CascadeClassifier mCascade;
-	
+
 	private ImageView iv_canny;
 	private ImageView iv_face_detect_img_view;
 	private ImageView iv_image_view_asm;
 	private TextView tv_info;
 	private Button btn_do_asm;
-	
+
 	private Mat currentFrame = new Mat();
 
 	@Override
@@ -63,17 +59,17 @@ public class MainActivity extends Activity implements PreviewCallback {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 		Log.d(TAG, "on Create");
-		
+
 		// init cascade
 		initCascade();
 		copyDataFile2LocalDir();
-		
+
 		tv_info = (TextView) findViewById(R.id.text_view_info);
 		iv_canny = (ImageView) findViewById(R.id.image_view_canny);
 		iv_face_detect_img_view = (ImageView) findViewById(R.id.face_detect_img_view);
 		iv_image_view_asm = (ImageView) findViewById(R.id.image_view_asm);
 		btn_do_asm = (Button) findViewById(R.id.btn_do_asm);
-		
+
 		btn_do_asm.setOnClickListener(new View.OnClickListener() {
 
 			@Override
@@ -93,32 +89,33 @@ public class MainActivity extends Activity implements PreviewCallback {
 	protected void onResume() {
 		Log.d(TAG, "on resume");
 		super.onResume();
-		
-        // Create an instance of Camera
-        mCamera = CameraUtils.getCameraInstance(this, Camera.CameraInfo.CAMERA_FACING_BACK);
-        
-        // Create our Preview view and set it as the content of our activity.
-        mPreview = new CameraPreview(this, mCamera);
-        FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
-        preview.addView(mPreview);
+
+		// Create an instance of Camera
+		mCamera = CameraUtils.getCameraInstance(this,
+				Camera.CameraInfo.CAMERA_FACING_BACK);
+
+		// Create our Preview view and set it as the content of our activity.
+		mPreview = new CameraPreview(this, mCamera);
+		FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
+		preview.addView(mPreview);
 	}
-	
+
 	@Override
 	protected void onPause() {
 		super.onPause();
 		Log.d(TAG, "on pause");
 	}
-	
+
 	@Override
 	protected void onStop() {
 		super.onPause();
 		Log.d(TAG, "on stop");
-		
+
 		if (mPreview != null) {
-        	FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
-        	preview.removeView(mPreview);
-        	mPreview = null;
-        }
+			FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
+			preview.removeView(mPreview);
+			mPreview = null;
+		}
 	}
 
 	@Override
@@ -136,14 +133,14 @@ public class MainActivity extends Activity implements PreviewCallback {
 		Mat src = new Mat();
 		Utils.bitmapToMat(bitmap, src);
 		src.copyTo(currentFrame);
-		
+
 		// do canny
 		Mat canny_mat = new Mat();
 		Imgproc.Canny(src, canny_mat, 50, 150);
 		Bitmap canny_bitmap = ImageUtils.mat2Bitmap(canny_mat);
-		
+
 		iv_canny.setImageBitmap(canny_bitmap);
-		
+
 		// do face detect
 		Mat detected = new Mat();
 		Mat face = new Mat();
@@ -151,14 +148,14 @@ public class MainActivity extends Activity implements PreviewCallback {
 		Bitmap face_detected_bitmap = ImageUtils.mat2Bitmap(detected);
 		iv_face_detect_img_view.setImageBitmap(face_detected_bitmap);
 	}
-	
+
 	private void findAsmLandmarks(Mat src) {
 		Mat mat = new Mat();
 		src.copyTo(mat);
 		tv_info.setText("doing ASM....");
 		new AsyncAsm(this).execute(mat);
 	}
-	
+
 	private void drawAsmPoints(Mat src, List<Integer> list) {
 		tv_info.setText("ASM Done.");
 		Mat dst = new Mat();
@@ -193,11 +190,11 @@ public class MainActivity extends Activity implements PreviewCallback {
 			iv_image_view_asm.setImageBitmap(bmp);
 		}
 	};
-	
+
 	private class AsyncAsm extends AsyncTask<Mat, Integer, List<Integer>> {
 		private Context context;
 		private Mat src;
-		
+
 		public AsyncAsm(Context context) {
 			this.context = context;
 		}
@@ -207,22 +204,22 @@ public class MainActivity extends Activity implements PreviewCallback {
 			List<Integer> list = new ArrayList<Integer>();
 			Mat src = mat0[0];
 			this.src = src;
-			
+
 			int[] points = NativeImageUtil.FindFaceLandmarks(src, 1, 1);
 			for (int i = 0; i < points.length; i++) {
 				list.add(points[i]);
 			}
-			
+
 			return list;
 		}
-		
+
 		// run on UI thread
 		@Override
 		protected void onPostExecute(List<Integer> list) {
 			MainActivity.this.drawAsmPoints(this.src, list);
 		}
 	};
-	
+
 	/*
 	 * init the cascade
 	 */
@@ -248,7 +245,8 @@ public class MainActivity extends Activity implements PreviewCallback {
 				Log.e(TAG, "Failed to load cascade classifier");
 				mCascade = null;
 			} else {
-				Log.i(TAG, "Loaded cascade classifier from "
+				Log.i(TAG,
+						"Loaded cascade classifier from "
 								+ cascadeFile.getAbsolutePath());
 			}
 
@@ -262,7 +260,7 @@ public class MainActivity extends Activity implements PreviewCallback {
 		}
 		return false;
 	}
-	
+
 	private void copyDataFile2LocalDir() {
 		try {
 			File dataDir = this.getDir("data", Context.MODE_PRIVATE);
@@ -292,10 +290,12 @@ public class MainActivity extends Activity implements PreviewCallback {
 		}
 	}
 
-	private boolean isDataFileInLocalDir(File f_frontalface, File f_lefteye, File f_righteye) {
+	private boolean isDataFileInLocalDir(File f_frontalface, File f_lefteye,
+			File f_righteye) {
 		boolean ret = false;
 		try {
-			ret = f_frontalface.exists() && f_lefteye.exists() && f_righteye.exists();
+			ret = f_frontalface.exists() && f_lefteye.exists()
+					&& f_righteye.exists();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -303,8 +303,7 @@ public class MainActivity extends Activity implements PreviewCallback {
 	}
 
 	/*
-	 * put raw data into local DIR
-	 * /data/data/com.example.asm/app_data/
+	 * put raw data into local DIR /data/data/com.example.asm/app_data/
 	 */
 	private boolean putDataFileInLocalDir(Context context, int id, File f) {
 		Log.d(TAG, "putDataFileInLocalDir: " + f.toString());
