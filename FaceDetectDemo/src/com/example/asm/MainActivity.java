@@ -5,6 +5,8 @@ import java.io.FileOutputStream;
 import java.io.IOError;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.opencv.android.Utils;
 import org.opencv.core.Core;
@@ -20,6 +22,7 @@ import android.graphics.Matrix;
 import android.hardware.Camera;
 import android.hardware.Camera.PreviewCallback;
 import android.hardware.Camera.Size;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Looper;
 import android.os.Message;
@@ -49,7 +52,11 @@ public class MainActivity extends Activity implements PreviewCallback {
 	
 	private ImageView iv_canny;
 	private ImageView iv_face_detect_img_view;
+	private ImageView iv_image_view_asm;
 	private TextView tv_info;
+	private Button btn_do_asm;
+	
+	private Mat currentFrame = new Mat();
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -64,6 +71,22 @@ public class MainActivity extends Activity implements PreviewCallback {
 		tv_info = (TextView) findViewById(R.id.text_view_info);
 		iv_canny = (ImageView) findViewById(R.id.image_view_canny);
 		iv_face_detect_img_view = (ImageView) findViewById(R.id.face_detect_img_view);
+		iv_image_view_asm = (ImageView) findViewById(R.id.image_view_asm);
+		btn_do_asm = (Button) findViewById(R.id.btn_do_asm);
+		
+		btn_do_asm.setOnClickListener(new View.OnClickListener() {
+
+			@Override
+			public void onClick(View v) {
+				// do asm
+				if (currentFrame.empty()) {
+					Toast.makeText(MainActivity.this, "no candidate image",
+							Toast.LENGTH_SHORT).show();
+					return;
+				}
+				findAsmLandmarks(currentFrame);
+			}
+		});
 	}
 
 	@Override
@@ -112,6 +135,7 @@ public class MainActivity extends Activity implements PreviewCallback {
 		Bitmap bitmap = ImageUtils.yuv2bitmap(data, size.width, size.height);
 		Mat src = new Mat();
 		Utils.bitmapToMat(bitmap, src);
+		src.copyTo(currentFrame);
 		
 		// do canny
 		Mat canny_mat = new Mat();
@@ -126,9 +150,78 @@ public class MainActivity extends Activity implements PreviewCallback {
 		detected = ImageUtils.detectFacesAndExtractFace(mCascade, src, face);
 		Bitmap face_detected_bitmap = ImageUtils.mat2Bitmap(detected);
 		iv_face_detect_img_view.setImageBitmap(face_detected_bitmap);
-		
-		// do asm
 	}
+	
+	private void findAsmLandmarks(Mat src) {
+		Mat mat = new Mat();
+		src.copyTo(mat);
+		tv_info.setText("doing ASM....");
+		new AsyncAsm(this).execute(mat);
+	}
+	
+	private void drawAsmPoints(Mat src, List<Integer> list) {
+		tv_info.setText("ASM Done.");
+		Mat dst = new Mat();
+		src.copyTo(dst);
+
+		int[] points = new int[list.size()];
+		for (int i = 0; i < list.size(); i++) {
+			points[i] = list.get(i);
+		}
+
+		if ((points[0] == -1) && (points[1] == -1)) {
+			Toast.makeText(MainActivity.this, "Cannot load image",
+					Toast.LENGTH_SHORT).show();
+		} else if ((points[0] == -2) && (points[1] == -2)) {
+			Toast.makeText(MainActivity.this, "Error in stasm_search_single!",
+					Toast.LENGTH_SHORT).show();
+		} else if ((points[0] == -3) && (points[1] == -3)) {
+			Toast.makeText(MainActivity.this, "No face found in input image",
+					Toast.LENGTH_SHORT).show();
+		} else {
+			for (int i = 0; i < points.length / 2 - 1; i++) {
+				Point p1 = new Point();
+				p1.x = points[2 * i];
+				p1.y = points[2 * i + 1];
+
+				Point p2 = new Point();
+				p2.x = points[2 * (i + 1)];
+				p2.y = points[2 * (i + 1) + 1];
+				Core.line(dst, p1, p2, new Scalar(255, 255, 255), 3);
+			}
+			Bitmap bmp = ImageUtils.mat2Bitmap(dst);
+			iv_image_view_asm.setImageBitmap(bmp);
+		}
+	};
+	
+	private class AsyncAsm extends AsyncTask<Mat, Integer, List<Integer>> {
+		private Context context;
+		private Mat src;
+		
+		public AsyncAsm(Context context) {
+			this.context = context;
+		}
+
+		@Override
+		protected List<Integer> doInBackground(Mat... mat0) {
+			List<Integer> list = new ArrayList<Integer>();
+			Mat src = mat0[0];
+			this.src = src;
+			
+			int[] points = NativeImageUtil.FindFaceLandmarks(src, 1, 1);
+			for (int i = 0; i < points.length; i++) {
+				list.add(points[i]);
+			}
+			
+			return list;
+		}
+		
+		// run on UI thread
+		@Override
+		protected void onPostExecute(List<Integer> list) {
+			MainActivity.this.drawAsmPoints(this.src, list);
+		}
+	};
 	
 	/*
 	 * init the cascade
