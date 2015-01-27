@@ -7,4 +7,9 @@ public class Params {
 	public static class CameraPreview {
 		public static final int PREVIEW_DEGREE = 90;
 	}
+	
+	public static class CannyParams {
+		public static int THRESHOLD1 = 50;
+		public static int THRESHOLD2 = 50;
+	}
 }

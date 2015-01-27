@@ -43,7 +43,7 @@ public class CannyViewActivity extends Activity implements PreviewCallback,
 	@Override
 	protected void onResume() {
 		super.onResume();
-		
+
 		mCamera = CameraUtils.getCameraInstance(this,
 				Camera.CameraInfo.CAMERA_FACING_BACK);
 	}
@@ -52,11 +52,25 @@ public class CannyViewActivity extends Activity implements PreviewCallback,
 	protected void onPause() {
 		super.onPause();
 		Log.d(TAG, "on pause");
+
 		if (mCamera != null) {
-			mCamera.stopPreview();
-			mCamera.release();
-			mCamera = null;
+			try {
+				mCamera.setPreviewCallback(null);
+				mCamera.setPreviewDisplay(null);
+			} catch (IOException e2) {
+				e2.printStackTrace();
+			} finally {
+				mCamera.stopPreview();
+				mCamera.release();
+				mCamera = null;
+			}
 		}
+	}
+
+	@Override
+	protected void onStop() {
+		super.onPause();
+		Log.d(TAG, "on stop");
 	}
 
 	private int getScreenWidth() {
@@ -86,14 +100,15 @@ public class CannyViewActivity extends Activity implements PreviewCallback,
 
 		// do canny
 		Mat canny_mat = new Mat();
-		Imgproc.Canny(src, canny_mat, 50, 150);
+		Imgproc.Canny(src, canny_mat, Params.CannyParams.THRESHOLD1,
+				Params.CannyParams.THRESHOLD2);
 		Bitmap canny_bitmap = ImageUtils.mat2Bitmap(canny_mat);
 
 		canny_view.setImageBitmap(canny_bitmap);
 	}
 
 	@Override
-	public void surfaceChanged(SurfaceHolder arg0, int arg1, int arg2, int arg3) {
+	public void surfaceChanged(SurfaceHolder mHolder, int format, int w, int h) {
 		// TODO Auto-generated method stub
 		// If your preview can change or rotate, take care of those events here.
 		// Make sure to stop the preview before resizing or reformatting it.
@@ -164,17 +179,5 @@ public class CannyViewActivity extends Activity implements PreviewCallback,
 	public void surfaceDestroyed(SurfaceHolder holder) {
 		// TODO Auto-generated method stub
 		Log.d(TAG, "SurfaceView Destroy!");
-		if (mCamera != null) {
-			try {
-				mCamera.setPreviewCallback(null);
-				mCamera.setPreviewDisplay(null);
-			} catch (IOException e2) {
-				e2.printStackTrace();
-			} finally {
-				mCamera.stopPreview();
-				mCamera.release();
-				mCamera = null;
-			}
-		}
 	}
 }
