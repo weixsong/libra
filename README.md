@@ -13,4 +13,15 @@ Developed by opencv4android, but only use opencv c/c++ head file.
 
 # ASMAndroidDemo
 This project combined native c/cpp code and opencv java SDK to do ASM points location and face detection.
+ASMAndroidDemo defaultly use back camera, just because I don't have enough time to add function to call 
+from camera.
+
+ASMAndroidDemo is doning camera preview in customized SurfaceView, which run in isolated thread, and doing 
+canny edge detection in UI thread, and doing face detection in a new thread, then, right now most of Android 
+phone is 4 cores cpu, then compute burden could be distributed into each cpu core.
+
+Actually the orginal project of this demo that I developed one year ago support both front camera and back camera,
+and user could config to choose camera and choose use native c/c++ code or opencv4android java SDK, but now I don't
+have enough time, so here just developed a working demo, someone interested about this project could fork it and 
+improve it.
 
