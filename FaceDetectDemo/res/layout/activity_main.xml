@@ -65,7 +65,7 @@
                 android:layout_gravity="center"
                 android:layout_marginLeft="1dp"
                 android:scaleType="centerInside"
-                android:src="@drawable/ic_launcher" />
+                android:src="@drawable/tech" />
         </LinearLayout>
     </LinearLayout>
 
