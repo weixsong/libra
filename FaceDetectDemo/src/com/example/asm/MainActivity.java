@@ -14,6 +14,7 @@ import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
+import org.opencv.objdetect.CascadeClassifier;
 
 import android.graphics.Bitmap;
 import android.hardware.Camera;
@@ -97,6 +98,7 @@ public class MainActivity extends Activity implements PreviewCallback {
 		btn_do_asm.setOnClickListener(new ClickEvent());
 		iv_canny.setOnClickListener(new ClickEvent());
 		iv_image_view_asm.setOnClickListener(new ClickEvent());
+		iv_face_detect_img_view.setOnClickListener(new ClickEvent());
 	}
 
 	private class ClickEvent implements View.OnClickListener {
@@ -124,6 +126,8 @@ public class MainActivity extends Activity implements PreviewCallback {
 			
 			if (v == iv_face_detect_img_view && doubleClick) {
 				// start FaceDetectActivity
+				Intent intent = new Intent(MainActivity.this, FaceDetectActivity.class);
+				startActivity(intent);
 			}
 			
 			if (v == iv_image_view_asm && doubleClick) {

@@ -11,7 +11,8 @@
         android:layout_width="1dp"
         android:layout_height="1dp"
         android:layout_marginLeft="0dp"
-        android:visibility="visible" />
+        android:visibility="visible" 
+        android:alpha="0"/>
 
     <ImageView
         android:id="@+id/canny_view"

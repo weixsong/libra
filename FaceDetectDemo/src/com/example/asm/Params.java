@@ -10,6 +10,12 @@ public class Params {
 	
 	public static class CannyParams {
 		public static int THRESHOLD1 = 50;
-		public static int THRESHOLD2 = 50;
+		public static int THRESHOLD2 = 150;
+	}
+	
+	public static class FaceDetectParams {
+		public static double SCALE_FACTOR = 1.2;
+		public static int MIN_NEIGHBORS = 3;
+		public static int MIN_SIZE = 30;
 	}
 }

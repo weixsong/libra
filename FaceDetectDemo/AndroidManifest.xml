@@ -33,6 +33,14 @@
             android:name="com.example.asm.CannyViewActivity"
             android:label="@string/canny_view" >
         </activity>
+        <activity
+            android:name="com.example.asm.FaceDetectActivity"
+            android:label="@string/face_detect_view" >
+        </activity>
+        <activity
+            android:name="com.example.asm.AsmViewActivity"
+            android:label="@string/asm_view" >
+        </activity>
     </application>
 
 </manifest>

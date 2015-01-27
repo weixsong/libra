@@ -1,12 +1,17 @@
 package com.example.asm;
 
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 
 import org.opencv.android.Utils;
 import org.opencv.core.Mat;
 import org.opencv.imgproc.Imgproc;
+import org.opencv.objdetect.CascadeClassifier;
 
 import android.app.Activity;
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.hardware.Camera;
@@ -19,25 +24,27 @@ import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 import android.widget.ImageView;
 
-public class CannyViewActivity extends Activity implements PreviewCallback,
+public class FaceDetectActivity extends Activity implements PreviewCallback,
 		SurfaceHolder.Callback {
-	private final String TAG = "com.example.asm.CannyViewActiviy";
+	private final String TAG = "com.example.asm.FaceDetectActivity";
 
 	private Camera mCamera;
-	private ImageView canny_view;
+	private ImageView face_detect_view;
 	private SurfaceView preview;
 	private SurfaceHolder mHolder;
 
 	private Size cameraPreviewSize;
+	private ImageUtils imageUtils;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		setContentView(R.layout.canny_layout);
-		canny_view = (ImageView) findViewById(R.id.canny_view);
-		preview = (SurfaceView) findViewById(R.id.canny_preview);
+		setContentView(R.layout.face_detect_layout);
+		face_detect_view = (ImageView) findViewById(R.id.face_detect_view);
+		preview = (SurfaceView) findViewById(R.id.face_detect_preview);
 		mHolder = preview.getHolder();
 		mHolder.addCallback(this);
+		imageUtils = new ImageUtils(this);
 	}
 
 	@Override
@@ -98,13 +105,11 @@ public class CannyViewActivity extends Activity implements PreviewCallback,
 		Mat src = new Mat();
 		Utils.bitmapToMat(bitmap, src);
 
-		// do canny
-		Mat canny_mat = new Mat();
-		Imgproc.Canny(src, canny_mat, Params.CannyParams.THRESHOLD1,
-				Params.CannyParams.THRESHOLD2);
-		Bitmap canny_bitmap = ImageUtils.mat2Bitmap(canny_mat);
-
-		canny_view.setImageBitmap(canny_bitmap);
+		// do face detection
+		Mat face = new Mat();
+		Mat detected = imageUtils.detectFacesAndExtractFace(src, face);
+		Bitmap detected_bitmap = ImageUtils.mat2Bitmap(detected);
+		face_detect_view.setImageBitmap(detected_bitmap);
 	}
 
 	@Override
