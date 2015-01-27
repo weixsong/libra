@@ -1,17 +1,9 @@
 package com.example.asm;
 
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-
 import org.opencv.android.Utils;
 import org.opencv.core.Mat;
-import org.opencv.imgproc.Imgproc;
-import org.opencv.objdetect.CascadeClassifier;
 
 import android.app.Activity;
-import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Point;
 import android.hardware.Camera;
@@ -40,7 +32,7 @@ public class FaceDetectActivity extends Activity implements PreviewCallback,
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.face_detect_layout);
-		face_detect_view = (ImageView) findViewById(R.id.face_detect_view);
+		face_detect_view = (ImageView) findViewById(R.id.face_view_face_detect_activity);
 		preview = (SurfaceView) findViewById(R.id.face_detect_preview);
 		mHolder = preview.getHolder();
 		mHolder.addCallback(this);
@@ -64,7 +56,7 @@ public class FaceDetectActivity extends Activity implements PreviewCallback,
 			try {
 				mCamera.setPreviewCallback(null);
 				mCamera.setPreviewDisplay(null);
-			} catch (IOException e2) {
+			} catch (Exception e2) {
 				e2.printStackTrace();
 			} finally {
 				mCamera.stopPreview();
@@ -150,7 +142,7 @@ public class FaceDetectActivity extends Activity implements PreviewCallback,
 			if (mCamera != null) {
 				try {
 					mCamera.setPreviewDisplay(null);
-				} catch (IOException e2) {
+				} catch (Exception e2) {
 					e2.printStackTrace();
 				}
 				mCamera.setPreviewCallback(null);
@@ -169,7 +161,7 @@ public class FaceDetectActivity extends Activity implements PreviewCallback,
 			mCamera.setPreviewDisplay(holder);
 			mCamera.setDisplayOrientation(Params.CameraPreview.PREVIEW_DEGREE);
 			mCamera.startPreview();
-		} catch (IOException e) {
+		} catch (Exception e) {
 			Log.d(TAG, "Error setting camera preview: " + e.getMessage());
 			if (mCamera != null) {
 				mCamera.setPreviewCallback(null);

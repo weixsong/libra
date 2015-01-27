@@ -14,14 +14,15 @@ import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
-import org.opencv.objdetect.CascadeClassifier;
 
 import android.graphics.Bitmap;
 import android.hardware.Camera;
 import android.hardware.Camera.PreviewCallback;
 import android.hardware.Camera.Size;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.app.Activity;
@@ -54,10 +55,11 @@ public class MainActivity extends Activity implements PreviewCallback {
 	private Button btn_do_asm;
 
 	private Mat currentFrame = new Mat();
-	private Bitmap currentAsmBitmap = null;
 
 	public Handler mHandler;
 	private FaceDetectThread faceDetectThread;
+	private boolean faceFound = false;
+	private Bitmap asmBitmap;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -81,10 +83,6 @@ public class MainActivity extends Activity implements PreviewCallback {
 					Mat detected = (Mat) msg.obj;
 					Bitmap face_detected_bitmap = ImageUtils
 							.mat2Bitmap(detected);
-					if (currentAsmBitmap != null) {
-						currentAsmBitmap.recycle();
-					}
-					currentAsmBitmap = Bitmap.createBitmap(face_detected_bitmap);
 					iv_face_detect_img_view
 							.setImageBitmap(face_detected_bitmap);
 				}
@@ -132,13 +130,17 @@ public class MainActivity extends Activity implements PreviewCallback {
 			
 			if (v == iv_image_view_asm && doubleClick) {
 				// start AsmViewActivity
-				if (currentAsmBitmap == null) {
+				if (faceFound == false) {
 					Toast.makeText(MainActivity.this, "no available ASM image",
 							Toast.LENGTH_SHORT).show();
-					return;
-				}
-				
-				// open 
+				} else {
+					// store image on device
+					saveBitmap(asmBitmap);
+					Intent intent = new Intent();
+					intent.setAction(Intent.ACTION_VIEW);
+					intent.setDataAndType(Uri.parse("file://" + Params.ASMActivity.LOCAL_FILE), "image/*");
+					startActivity(intent);
+				} 
 			}
 
 			if (v == btn_do_asm) {
@@ -146,10 +148,33 @@ public class MainActivity extends Activity implements PreviewCallback {
 				if (currentFrame.empty()) {
 					Toast.makeText(MainActivity.this, "no candidate image",
 							Toast.LENGTH_SHORT).show();
-					return;
+				} else {
+					findAsmLandmarks(currentFrame);
 				}
-				findAsmLandmarks(currentFrame);
 			}
+		}
+	}
+	
+	private void saveBitmap(Bitmap bitmap) {
+		String dir_path = Environment.getExternalStorageDirectory()
+				.getAbsolutePath();
+		File dir = new File(dir_path);
+		if (!dir.exists()) {
+			dir.mkdirs();
+		}
+
+		try {
+			File file = new File(Params.ASMActivity.LOCAL_FILE);
+			if (file.exists()) {
+				file.delete();
+			}
+			
+			FileOutputStream out = new FileOutputStream(file);
+			bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
+			out.flush();
+			out.close();
+		} catch (IOException e) {
+			e.printStackTrace();
 		}
 	}
 
@@ -214,7 +239,7 @@ public class MainActivity extends Activity implements PreviewCallback {
 
 		// do canny
 		Mat canny_mat = new Mat();
-		Imgproc.Canny(src, canny_mat, 50, 150);
+		Imgproc.Canny(src, canny_mat, Params.CannyParams.THRESHOLD1, Params.CannyParams.THRESHOLD2);
 		Bitmap canny_bitmap = ImageUtils.mat2Bitmap(canny_mat);
 
 		iv_canny.setImageBitmap(canny_bitmap);
@@ -224,6 +249,10 @@ public class MainActivity extends Activity implements PreviewCallback {
 	}
 
 	private void findAsmLandmarks(Mat src) {
+		faceFound = false;
+		if (asmBitmap != null) {
+			asmBitmap.recycle();
+		}
 		Mat mat = new Mat();
 		src.copyTo(mat);
 		tv_info.setText("doing ASM....");
@@ -240,16 +269,17 @@ public class MainActivity extends Activity implements PreviewCallback {
 			points[i] = list.get(i);
 		}
 
-		if ((points[0] == -1) && (points[1] == -1)) {
+		if (points[0] == Params.ASMError.BAD_INPUT) {
 			Toast.makeText(MainActivity.this, "Cannot load image",
 					Toast.LENGTH_SHORT).show();
-		} else if ((points[0] == -2) && (points[1] == -2)) {
+		} else if ( points[0] == Params.ASMError.INIT_FAIL) {
 			Toast.makeText(MainActivity.this, "Error in stasm_search_single!",
 					Toast.LENGTH_SHORT).show();
-		} else if ((points[0] == -3) && (points[1] == -3)) {
+		} else if (points[0] == Params.ASMError.NO_FACE_FOUND) {
 			Toast.makeText(MainActivity.this, "No face found in input image",
 					Toast.LENGTH_SHORT).show();
 		} else {
+			faceFound = true;
 			for (int i = 0; i < points.length / 2 - 1; i++) {
 				Point p1 = new Point();
 				p1.x = points[2 * i];
@@ -261,6 +291,7 @@ public class MainActivity extends Activity implements PreviewCallback {
 				Core.line(dst, p1, p2, new Scalar(255, 255, 255), 3);
 			}
 			Bitmap bmp = ImageUtils.mat2Bitmap(dst);
+			asmBitmap = Bitmap.createBitmap(bmp);
 			iv_image_view_asm.setImageBitmap(bmp);
 		}
 	};

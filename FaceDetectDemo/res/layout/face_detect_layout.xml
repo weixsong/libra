@@ -11,13 +11,14 @@
         android:layout_width="1dp"
         android:layout_height="1dp"
         android:layout_marginLeft="0dp"
-        android:visibility="visible" 
-        android:alpha="0"/>
+        android:alpha="0"
+        android:visibility="visible" />
 
     <ImageView
-        android:id="@+id/face_detect_view"
+        android:id="@+id/face_view_face_detect_activity"
         android:layout_width="fill_parent"
         android:layout_height="fill_parent"
         android:scaleType="fitCenter"
         android:src="@drawable/tech" />
+
 </LinearLayout>

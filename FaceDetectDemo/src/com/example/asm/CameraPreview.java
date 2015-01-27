@@ -1,7 +1,5 @@
 package com.example.asm;
 
-import java.io.IOException;
-
 import android.content.Context;
 import android.hardware.Camera;
 import android.hardware.Camera.PreviewCallback;
@@ -39,7 +37,7 @@ public class CameraPreview extends SurfaceView implements
 			mCamera.setPreviewDisplay(holder);
 			mCamera.setDisplayOrientation(Params.CameraPreview.PREVIEW_DEGREE);
 			mCamera.startPreview();
-		} catch (IOException e) {
+		} catch (Exception e) {
 			Log.d(TAG, "Error setting camera preview: " + e.getMessage());
 			if (mCamera != null) {
 				mCamera.setPreviewCallback(null);
@@ -56,7 +54,7 @@ public class CameraPreview extends SurfaceView implements
 			try {
 				mCamera.setPreviewCallback(null);
 				mCamera.setPreviewDisplay(null);
-			} catch (IOException e2) {
+			} catch (Exception e2) {
 				e2.printStackTrace();
 			} finally {
 				mCamera.stopPreview();
@@ -100,7 +98,7 @@ public class CameraPreview extends SurfaceView implements
 			if (mCamera != null) {
 				try {
 					mCamera.setPreviewDisplay(null);
-				} catch (IOException e2) {
+				} catch (Exception e2) {
 					e2.printStackTrace();
 				}
 				mCamera.setPreviewCallback(null);
