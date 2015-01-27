@@ -12,7 +12,6 @@ import android.view.SurfaceView;
 public class CameraPreview extends SurfaceView implements
 		SurfaceHolder.Callback {
 	private final String TAG = "com.example.asm.CameraPreview";
-	private final int PREVIEW_DEGREE = 90;
 
 	private SurfaceHolder mHolder;
 	private Camera mCamera;
@@ -38,7 +37,7 @@ public class CameraPreview extends SurfaceView implements
 		Log.d(TAG, "SurfaceView Created!");
 		try {
 			mCamera.setPreviewDisplay(holder);
-			mCamera.setDisplayOrientation(90);
+			mCamera.setDisplayOrientation(Params.CameraPreview.PREVIEW_DEGREE);
 			mCamera.startPreview();
 		} catch (IOException e) {
 			Log.d(TAG, "Error setting camera preview: " + e.getMessage());
@@ -91,7 +90,7 @@ public class CameraPreview extends SurfaceView implements
 		// start preview with new settings
 		try {
 			mCamera.setPreviewDisplay(mHolder);
-			mCamera.setDisplayOrientation(PREVIEW_DEGREE);
+			mCamera.setDisplayOrientation(Params.CameraPreview.PREVIEW_DEGREE);
 			// set preview callback
 			mCamera.setPreviewCallback((PreviewCallback) context);
 			mCamera.startPreview();

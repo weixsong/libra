@@ -4,5 +4,6 @@
     <string name="app_name">ASMDemo</string>
     <string name="hello_world">Hello world!</string>
     <string name="action_settings">Settings</string>
+    <string name="canny_view">CannyDetect</string>
 
 </resources>

@@ -14,7 +14,6 @@ import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 import org.opencv.imgproc.Imgproc;
-import org.opencv.objdetect.CascadeClassifier;
 
 import android.graphics.Bitmap;
 import android.hardware.Camera;
@@ -26,19 +25,19 @@ import android.os.Handler;
 import android.os.Message;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.util.Log;
-import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 import android.widget.TextView;
 
 public class MainActivity extends Activity implements PreviewCallback {
 	private final String TAG = "com.example.asm.MainActivity";
 	private final int BUFFER_SIZE = 4096;
+	private final long DOUBLE_PRESS_INTERVAL = 500;
 
 	static {
 		System.loadLibrary("opencv_java");
@@ -54,7 +53,8 @@ public class MainActivity extends Activity implements PreviewCallback {
 	private Button btn_do_asm;
 
 	private Mat currentFrame = new Mat();
-	
+	private Bitmap currentAsmBitmap = null;
+
 	public Handler mHandler;
 	private FaceDetectThread faceDetectThread;
 
@@ -70,12 +70,74 @@ public class MainActivity extends Activity implements PreviewCallback {
 		iv_canny = (ImageView) findViewById(R.id.image_view_canny);
 		iv_face_detect_img_view = (ImageView) findViewById(R.id.face_detect_img_view);
 		iv_image_view_asm = (ImageView) findViewById(R.id.image_view_asm);
-		btn_do_asm = (Button) findViewById(R.id.btn_do_asm);	
+		btn_do_asm = (Button) findViewById(R.id.btn_do_asm);
 
-		btn_do_asm.setOnClickListener(new View.OnClickListener() {
+		mHandler = new Handler() {
 
 			@Override
-			public void onClick(View v) {
+			public void handleMessage(Message msg) {
+				if (msg.what == Params.FACE_DETECT_DONE) {
+					Mat detected = (Mat) msg.obj;
+					Bitmap face_detected_bitmap = ImageUtils
+							.mat2Bitmap(detected);
+					if (currentAsmBitmap != null) {
+						currentAsmBitmap.recycle();
+					}
+					currentAsmBitmap = Bitmap.createBitmap(face_detected_bitmap);
+					iv_face_detect_img_view
+							.setImageBitmap(face_detected_bitmap);
+				}
+			}
+		};
+
+		initUI();
+	}
+
+	private void initUI() {
+		btn_do_asm.setOnClickListener(new ClickEvent());
+		iv_canny.setOnClickListener(new ClickEvent());
+		iv_image_view_asm.setOnClickListener(new ClickEvent());
+	}
+
+	private class ClickEvent implements View.OnClickListener {
+
+		long last = 0;
+		long current = 0;
+
+		@Override
+		public void onClick(View v) {
+			last = current;
+			current = System.currentTimeMillis();
+			boolean doubleClick = false;
+
+			if (current - last < DOUBLE_PRESS_INTERVAL) {
+				// legal double click
+				Log.i(TAG, "double click");
+				doubleClick = true;
+			}
+
+			if (v == iv_canny && doubleClick) {
+				// start CannyActivity
+				Intent intent = new Intent(MainActivity.this, CannyViewActivity.class);
+				startActivity(intent);
+			}
+			
+			if (v == iv_face_detect_img_view && doubleClick) {
+				// start FaceDetectActivity
+			}
+			
+			if (v == iv_image_view_asm && doubleClick) {
+				// start AsmViewActivity
+				if (currentAsmBitmap == null) {
+					Toast.makeText(MainActivity.this, "no available ASM image",
+							Toast.LENGTH_SHORT).show();
+					return;
+				}
+				
+				// open 
+			}
+
+			if (v == btn_do_asm) {
 				// do asm
 				if (currentFrame.empty()) {
 					Toast.makeText(MainActivity.this, "no candidate image",
@@ -84,26 +146,14 @@ public class MainActivity extends Activity implements PreviewCallback {
 				}
 				findAsmLandmarks(currentFrame);
 			}
-		});
-		
-		mHandler = new Handler() {
-			
-			@Override
-			public void handleMessage(Message msg) {
-				if (msg.what == Task.FACE_DETECT_DONE) {
-					Mat detected = (Mat) msg.obj;
-					Bitmap face_detected_bitmap = ImageUtils.mat2Bitmap(detected);
-					iv_face_detect_img_view.setImageBitmap(face_detected_bitmap);
-				}
-			}
-		};
+		}
 	}
 
 	@Override
 	protected void onResume() {
 		Log.d(TAG, "on resume");
 		super.onResume();
-		
+
 		faceDetectThread = new FaceDetectThread(this);
 		faceDetectThread.start();
 
@@ -121,13 +171,7 @@ public class MainActivity extends Activity implements PreviewCallback {
 	protected void onPause() {
 		super.onPause();
 		Log.d(TAG, "on pause");
-	}
-
-	@Override
-	protected void onStop() {
-		super.onPause();
 		
-		Log.d(TAG, "on stop");
 		try {
 			faceDetectThread.interrupt();
 		} catch (Exception e) {
@@ -139,6 +183,13 @@ public class MainActivity extends Activity implements PreviewCallback {
 			preview.removeView(mPreview);
 			mPreview = null;
 		}
+	}
+
+	@Override
+	protected void onStop() {
+		super.onPause();
+
+		Log.d(TAG, "on stop");
 	}
 
 	@Override
@@ -165,7 +216,7 @@ public class MainActivity extends Activity implements PreviewCallback {
 		iv_canny.setImageBitmap(canny_bitmap);
 
 		// do face detect in Thread
-		faceDetectThread.assignTask(Task.DO_FACE_DETECT, src);
+		faceDetectThread.assignTask(Params.DO_FACE_DETECT, src);
 	}
 
 	private void findAsmLandmarks(Mat src) {

@@ -24,6 +24,9 @@ In this project, ASM points location is done by native c/c++ code, and because A
 compute the points location, so ASM computation will be done in AsyncTask, this method will not block the UI
 thread and will not cause an ANR error of Android.
 
+For Canny Edge detect, face detection, here default parameters are used, actually these parameters should be configurate
+by user, but no time for me.
+
 Actually the orginal project of this demo that I developed one year ago support both front camera and back camera,
 and user could config to choose camera and choose use native c/c++ code or opencv4android java SDK, but now I don't
 have enough time, so here just developed a working demo, someone interested about this project could fork it and 

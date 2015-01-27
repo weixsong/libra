@@ -32,9 +32,9 @@ public class FaceDetectThread extends Thread {
 	public void assignTask(int id, Mat src) {
 
 		// do face detect
-		if (id == Task.DO_FACE_DETECT) {
+		if (id == Params.DO_FACE_DETECT) {
 			Message msg = new Message();
-			msg.what = Task.DO_FACE_DETECT;
+			msg.what = Params.DO_FACE_DETECT;
 			msg.obj = src;
 			this.mHandler.sendMessage(msg);
 		}
@@ -46,7 +46,7 @@ public class FaceDetectThread extends Thread {
 		mHandler = new Handler() {
 			@Override
 			public void handleMessage(Message msg) {
-				if (msg.what == Task.DO_FACE_DETECT) {
+				if (msg.what == Params.DO_FACE_DETECT) {
 					Mat detected = new Mat();
 					Mat face = new Mat();
 					Mat src = (Mat) msg.obj;
@@ -54,7 +54,7 @@ public class FaceDetectThread extends Thread {
 							src, face);
 
 					Message uiMsg = new Message();
-					uiMsg.what = Task.FACE_DETECT_DONE;
+					uiMsg.what = Params.FACE_DETECT_DONE;
 					uiMsg.obj = detected;
 					// send Message to UI
 					((MainActivity) mContext).mHandler.sendMessage(uiMsg);
