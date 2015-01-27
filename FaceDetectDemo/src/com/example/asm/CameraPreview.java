@@ -22,9 +22,6 @@ public class CameraPreview extends SurfaceView implements
 	private Camera mCamera;
 
 	private Context context;
-	private Activity activity;
-	private int width;
-	private int height;
 
 	public CameraPreview(Context context, Camera camera) {
 		super(context);
@@ -118,6 +115,7 @@ public class CameraPreview extends SurfaceView implements
 		}
 	}
 
+	/* this will make the preview normal size, but could not center the preview
 	@Override
 	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
 		final int width = resolveSize(getSuggestedMinimumWidth(),
@@ -137,4 +135,5 @@ public class CameraPreview extends SurfaceView implements
 		// slightly
 		setMeasuredDimension(width, (int) (width * ratio));
 	}
+	*/
 }
