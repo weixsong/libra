@@ -22,6 +22,8 @@ import android.hardware.Camera.PreviewCallback;
 import android.hardware.Camera.Size;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.app.Activity;
 import android.content.Context;
 import android.util.Log;
@@ -44,7 +46,6 @@ public class MainActivity extends Activity implements PreviewCallback {
 
 	private CameraPreview mPreview;
 	private Camera mCamera;
-	private CascadeClassifier mCascade;
 
 	private ImageView iv_canny;
 	private ImageView iv_face_detect_img_view;
@@ -53,6 +54,9 @@ public class MainActivity extends Activity implements PreviewCallback {
 	private Button btn_do_asm;
 
 	private Mat currentFrame = new Mat();
+	
+	public Handler mHandler;
+	private FaceDetectThread faceDetectThread;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -60,15 +64,13 @@ public class MainActivity extends Activity implements PreviewCallback {
 		setContentView(R.layout.activity_main);
 		Log.d(TAG, "on Create");
 
-		// init cascade
-		initCascade();
 		copyDataFile2LocalDir();
 
 		tv_info = (TextView) findViewById(R.id.text_view_info);
 		iv_canny = (ImageView) findViewById(R.id.image_view_canny);
 		iv_face_detect_img_view = (ImageView) findViewById(R.id.face_detect_img_view);
 		iv_image_view_asm = (ImageView) findViewById(R.id.image_view_asm);
-		btn_do_asm = (Button) findViewById(R.id.btn_do_asm);
+		btn_do_asm = (Button) findViewById(R.id.btn_do_asm);	
 
 		btn_do_asm.setOnClickListener(new View.OnClickListener() {
 
@@ -83,12 +85,27 @@ public class MainActivity extends Activity implements PreviewCallback {
 				findAsmLandmarks(currentFrame);
 			}
 		});
+		
+		mHandler = new Handler() {
+			
+			@Override
+			public void handleMessage(Message msg) {
+				if (msg.what == Task.FACE_DETECT_DONE) {
+					Mat detected = (Mat) msg.obj;
+					Bitmap face_detected_bitmap = ImageUtils.mat2Bitmap(detected);
+					iv_face_detect_img_view.setImageBitmap(face_detected_bitmap);
+				}
+			}
+		};
 	}
 
 	@Override
 	protected void onResume() {
 		Log.d(TAG, "on resume");
 		super.onResume();
+		
+		faceDetectThread = new FaceDetectThread(this);
+		faceDetectThread.start();
 
 		// Create an instance of Camera
 		mCamera = CameraUtils.getCameraInstance(this,
@@ -109,7 +126,13 @@ public class MainActivity extends Activity implements PreviewCallback {
 	@Override
 	protected void onStop() {
 		super.onPause();
+		
 		Log.d(TAG, "on stop");
+		try {
+			faceDetectThread.interrupt();
+		} catch (Exception e) {
+			Log.i(TAG, e.toString());
+		}
 
 		if (mPreview != null) {
 			FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
@@ -141,12 +164,8 @@ public class MainActivity extends Activity implements PreviewCallback {
 
 		iv_canny.setImageBitmap(canny_bitmap);
 
-		// do face detect
-		Mat detected = new Mat();
-		Mat face = new Mat();
-		detected = ImageUtils.detectFacesAndExtractFace(mCascade, src, face);
-		Bitmap face_detected_bitmap = ImageUtils.mat2Bitmap(detected);
-		iv_face_detect_img_view.setImageBitmap(face_detected_bitmap);
+		// do face detect in Thread
+		faceDetectThread.assignTask(Task.DO_FACE_DETECT, src);
 	}
 
 	private void findAsmLandmarks(Mat src) {
@@ -219,47 +238,6 @@ public class MainActivity extends Activity implements PreviewCallback {
 			MainActivity.this.drawAsmPoints(this.src, list);
 		}
 	};
-
-	/*
-	 * init the cascade
-	 */
-	private boolean initCascade() {
-		try {
-			InputStream is = this.getResources().openRawResource(
-					R.raw.haarcascade_frontalface_alt2);
-			File cascadeDir = this.getDir("cascade", Context.MODE_PRIVATE);
-			File cascadeFile = new File(cascadeDir,
-					"haarcascade_frontalface_alt2.xml");
-			FileOutputStream os = new FileOutputStream(cascadeFile);
-
-			byte[] buffer = new byte[4096];
-			int bytesRead;
-			while ((bytesRead = is.read(buffer)) != -1) {
-				os.write(buffer, 0, bytesRead);
-			}
-			is.close();
-			os.close();
-
-			mCascade = new CascadeClassifier(cascadeFile.getAbsolutePath());
-			if (mCascade.empty()) {
-				Log.e(TAG, "Failed to load cascade classifier");
-				mCascade = null;
-			} else {
-				Log.i(TAG,
-						"Loaded cascade classifier from "
-								+ cascadeFile.getAbsolutePath());
-			}
-
-			cascadeFile.delete();
-			cascadeDir.delete();
-			return true;
-
-		} catch (IOException e) {
-			e.printStackTrace();
-			Log.e(TAG, "Failed to load cascade. Exception thrown: " + e);
-		}
-		return false;
-	}
 
 	private void copyDataFile2LocalDir() {
 		try {
