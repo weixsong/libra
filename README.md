@@ -20,6 +20,10 @@ ASMAndroidDemo is doning camera preview in customized SurfaceView, which run in 
 canny edge detection in UI thread, and doing face detection in a new thread, then, right now most of Android 
 phone is 4 cores cpu, then compute burden could be distributed into each cpu core.
 
+In this project, ASM points location is done by native c/c++ code, and because ASM really cost a longer time to 
+compute the points location, so ASM computation will be done in AsyncTask, this method will not block the UI
+thread and will not cause an ANR error of Android.
+
 Actually the orginal project of this demo that I developed one year ago support both front camera and back camera,
 and user could config to choose camera and choose use native c/c++ code or opencv4android java SDK, but now I don't
 have enough time, so here just developed a working demo, someone interested about this project could fork it and 
