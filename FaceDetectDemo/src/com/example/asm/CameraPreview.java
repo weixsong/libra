@@ -2,16 +2,12 @@ package com.example.asm;
 
 import java.io.IOException;
 
-import android.app.Activity;
 import android.content.Context;
 import android.hardware.Camera;
 import android.hardware.Camera.PreviewCallback;
-import android.hardware.Camera.Size;
 import android.util.Log;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
-import android.view.View;
-import android.widget.FrameLayout;
 
 public class CameraPreview extends SurfaceView implements
 		SurfaceHolder.Callback {
@@ -59,6 +55,7 @@ public class CameraPreview extends SurfaceView implements
 		Log.d(TAG, "SurfaceView Destroy!");
 		if (mCamera != null) {
 			try {
+				mCamera.setPreviewCallback(null);
 				mCamera.setPreviewDisplay(null);
 			} catch (IOException e2) {
 				e2.printStackTrace();

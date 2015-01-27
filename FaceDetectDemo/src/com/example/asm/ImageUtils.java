@@ -52,7 +52,6 @@ public class ImageUtils {
 		Bitmap bmp = Bitmap.createBitmap(data.width(), data.height(), Bitmap.Config.ARGB_8888);
         try {
             Utils.matToBitmap(data, bmp);
-            Log.d(TAG, "Mat transpose to Bitmap OK");
         } catch(Exception e) {
             Log.e(TAG, "Utils.matToBitmap() throws an exception: " + e.getMessage());
             bmp.recycle();
