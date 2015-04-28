@@ -32,3 +32,16 @@ and user could config to choose camera and choose use native c/c++ code or openc
 have enough time, so here just developed a working demo, someone interested about this project could fork it and 
 improve it.
 
+
+# OCRDemo
+OCRDemo is an application that shows how to use OCR (Optical Character Recognition) on Android platform.
+This OCRDemo project is based on tess-two (an Android library that could use OCR) and tesseract-orc project(using this project's training data).
+
+How to setup this project:
+Step 1: goto https://github.com/weixsong/tess-two, download the latest tess-two project, import the project by Eclipse.
+Step 2: goto https://code.google.com/p/tesseract-ocr/ download your interested language trainning data.
+The default trainning data is Chinese OCR data, and this default trainning data is already contained in this repo, if you just want to do Chinese OCR, you don't need to go to tesseract-ocr project to download trainning data. But if you want to do other language OCR, such as English, you need to go to tesseract-ocr project and download corresponding trainning data. And, don't forget to change the code in this OCRDemo project, as shown following:
+
+Change the code :private String lang = "chi_sim";
+into the corresponding language.
+And don't forget to put the downloaded trainning data into asset fold of this project.
