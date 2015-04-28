@@ -39,12 +39,12 @@ This OCRDemo project is based on tess-two (an Android library that could use OCR
 
 How to setup this project:
 
-Step 1: goto https://github.com/weixsong/tess-two, download the latest tess-two project, import the project by Eclipse.
+* Step 1: goto https://github.com/weixsong/tess-two, download the latest tess-two project, import the project by Eclipse.
 
-Step 2: goto https://code.google.com/p/tesseract-ocr/, download your interested language trainning data.
+* Step 2: goto https://code.google.com/p/tesseract-ocr/, download your interested language trainning data.
 The default trainning data is Chinese OCR data, and this default trainning data is already contained in this repo, if you just want to do Chinese OCR, you don't need to go to tesseract-ocr project to download trainning data. But if you want to do other language OCR, such as English, you need to go to tesseract-ocr project and download corresponding trainning data. 
 
-Step 3: change the code in this OCRDemo project, as shown following:
+* Step 3: change the code in this OCRDemo project, as shown following:
 
 Change the code :
 
@@ -53,10 +53,10 @@ Change the code :
 change "chi_sim" into the corresponding language.
 And don't forget to put the downloaded trainning data into asset fold of this project.
 
-Step 4: after imported the tess-two project, remember reference the tess-two project in this OCRDemo project, otherwise it could not found the referenced API. 
+* Step 4: after imported the tess-two project, remember reference the tess-two project in this OCRDemo project, otherwise it could not found the referenced API. 
 Update the property of this OCRDemo project, and set the library reference to tess-two project.
 
-Step 5: then you can build this OCRDemo project and run it in your Android phone or emulator.
+* Step 5: then you can build this OCRDemo project and run it in your Android phone or emulator.
 
 # Say Goodbye to Image Process
 Maybe this repo is my last image process related project, right now I have graduated for nearly one year and working on NLP, ML related work in Oracle. I really like this NLP related work, and maybe in the future I don't have time to do any image process work. Then, goodbye image process.
