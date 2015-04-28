@@ -47,3 +47,5 @@ The default trainning data is Chinese OCR data, and this default trainning data 
 Change the code :private String lang = "chi_sim";
 into the corresponding language.
 And don't forget to put the downloaded trainning data into asset fold of this project.
+
+Step 3: after imported the tess-two project, remember reference the tess-two project in this OCRDemo project, otherwise it could not found the referenced API.
