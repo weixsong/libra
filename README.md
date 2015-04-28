@@ -46,7 +46,10 @@ The default trainning data is Chinese OCR data, and this default trainning data 
 
 Step 3: change the code in this OCRDemo project, as shown following:
 
-Change the code :private String lang = "chi_sim"; in MainActivity.java
+Change the code :
+
+    private String lang = "chi_sim"; //in MainActivity.java
+
 change "chi_sim" into the corresponding language.
 And don't forget to put the downloaded trainning data into asset fold of this project.
 
