@@ -58,5 +58,7 @@ Update the property of this OCRDemo project, and set the library reference to te
 
 * Step 5: then you can build this OCRDemo project and run it in your Android phone or emulator.
 
+This OCRDemo project is just a very simple project that show you how to do OCR on Android platform. You can take a look of this project and know how to do OCR on Android platform quickly. And you can play whatever you want by OCR on Android, and maybe you could come up with some wonderful projects.
+
 # Say Goodbye to Image Process
 Maybe this repo is my last image process related project, right now I have graduated for nearly one year and working on NLP, ML related work in Oracle. I really like this NLP related work, and maybe in the future I don't have time to do any image process work. Then, goodbye image process.
