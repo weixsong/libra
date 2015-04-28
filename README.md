@@ -45,13 +45,8 @@ How to setup this project:
 The default trainning data is Chinese OCR data, and this default trainning data is already contained in this repo, if you just want to do Chinese OCR, you don't need to go to tesseract-ocr project to download trainning data. But if you want to do other language OCR, such as English, you need to go to tesseract-ocr project and download corresponding trainning data. 
 
 * Step 3: change the code in this OCRDemo project, as shown following:
-  Change the code :
+  Change this line of code,
 
-cd ..
-cd eyes-two
-ndk-build
-android update project --path .
-ant release
 
     private String lang = "chi_sim"; //in MainActivity.java 
 
