@@ -1,0 +1,3 @@
+This project is OCR on Android platform.
+This project dependent on tess-two project, which is a OCR project.
+You can take this project as an example of how to use tess-two on Android platform.
