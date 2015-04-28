@@ -47,6 +47,12 @@ The default trainning data is Chinese OCR data, and this default trainning data 
 * Step 3: change the code in this OCRDemo project, as shown following:
   Change the code :
 
+cd ..
+cd eyes-two
+ndk-build
+android update project --path .
+ant release
+
     private String lang = "chi_sim"; //in MainActivity.java 
 
   change "chi_sim" into the corresponding language.
