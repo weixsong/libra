@@ -152,10 +152,10 @@ public class MainActivity extends Activity {
 			Uri uri = Uri.fromFile(new File(IMAGE));
 			intent.setDataAndType(uri, "image/*");
 			intent.putExtra("crop", "true");
-			intent.putExtra("aspectX", 1);
+			intent.putExtra("aspectX", 2);
 			intent.putExtra("aspectY", 1);
 			intent.putExtra("outputX", 256);
-			intent.putExtra("outputY", 256);
+			intent.putExtra("outputY", 128);
 			
 			File tempFile = new File(IMAGE_CROP);
 			intent.putExtra("output", Uri.fromFile(tempFile));
@@ -166,19 +166,18 @@ public class MainActivity extends Activity {
 		} else if (resultCode == Activity.RESULT_OK
 				&& requestCode == MainActivity.REQUEST_IMAGE_CROP) {
 			Log.i(TAG, "crop return");
-			//setResult(1, data);
-			ocr_process();
+			ocr_process(data);
 		} else {
 			Log.v(TAG, "User cancelled");
 		}
 	}
 
-	private void ocr_process() {
+	private void ocr_process(Intent data) {
 		Log.i(TAG, "on ocr_process");
 		
 		BitmapFactory.Options options = new BitmapFactory.Options();
 		options.inSampleSize = 4;
-		Bitmap bitmap = BitmapFactory.decodeFile(IMAGE, options);
+		Bitmap bitmap = BitmapFactory.decodeFile(IMAGE_CROP, options);
 
 		try {
 			ExifInterface exif = new ExifInterface(IMAGE);
