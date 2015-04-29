@@ -13,12 +13,15 @@ import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.ImageView;
+import android.widget.TextView;
 
 public class MainActivity extends Activity {
 
@@ -28,7 +31,7 @@ public class MainActivity extends Activity {
 	private static final String TAG = "MainActivity";
 
 	private static final int REQUEST_IMAGE_CAPTURE = 1;
-	public static String LANG = "chi_sim";
+	public static String LANG = "eng";
 
 	private static final String TESSDATA = "tessdata";
 	private static final String IMAGENAME = "ocr.jpg";
@@ -45,14 +48,20 @@ public class MainActivity extends Activity {
 
 	private ProgressDialog mProgressDialog;
 	private TesstwoOCR ocr;
-	
+
 	private int targetW = 800;
 	private int targetH = 600;
+
+	private TextView tv_ocr_results;
+	private ImageView imageView;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main_activity);
+
+		tv_ocr_results = (TextView) findViewById(R.id.ocr_results);
+		imageView = (ImageView) findViewById(R.id.ocr_image);
 
 		// check and copy files
 		checkAndCopyFiles();
@@ -116,7 +125,7 @@ public class MainActivity extends Activity {
 			dispatchTakePictureIntent();
 			return true;
 		}
-		
+
 		if (id == R.id.setting) {
 			// TODO: setting which language to use
 			return true;
@@ -187,15 +196,49 @@ public class MainActivity extends Activity {
 				runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
-						Intent intent = new Intent(MainActivity.this,
-								ResultViewer.class);
-						intent.putExtra(OCR_CONTENT, result);
-						MainActivity.this.startActivity(intent);
+						new AsyncImageLoader().execute(MainActivity.IMAGE_PATH);
+						tv_ocr_results.setText(result);
 						mProgressDialog.dismiss();
 					}
 				});
 
 			};
 		}).start();
+	}
+
+	private class AsyncImageLoader extends AsyncTask<String, Integer, Bitmap> {
+		private final String TAG = "com.example.homework.AsyncLoadImages";
+
+		@Override
+		protected Bitmap doInBackground(String... arg0) {
+			Log.i(TAG, "doInBackgroud");
+			Bitmap b = readImage(arg0[0]);
+			return b;
+		}
+
+		@Override
+		protected void onPostExecute(Bitmap bitmap) {
+			Log.i(TAG, "onPostExecute");
+			imageView.setImageBitmap(bitmap);
+		}
+
+		private Bitmap readImage(String file) {
+			BitmapFactory.Options bmOptions = new BitmapFactory.Options();
+			bmOptions.inJustDecodeBounds = true;
+			BitmapFactory.decodeFile(file, bmOptions);
+			int photoW = bmOptions.outWidth;
+			int photoH = bmOptions.outHeight;
+
+			// Determine how much to scale down the image
+			int scaleFactor = Math.min(photoW / targetW, photoH / targetH);
+
+			// Decode the image file into a Bitmap sized to fill the View
+			bmOptions.inJustDecodeBounds = false;
+			bmOptions.inSampleSize = scaleFactor;
+			bmOptions.inPurgeable = true;
+
+			Bitmap bitmap = BitmapFactory.decodeFile(file, bmOptions);
+			return bitmap;
+		}
 	}
 }
