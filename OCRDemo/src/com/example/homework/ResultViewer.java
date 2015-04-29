@@ -19,6 +19,7 @@ public class ResultViewer extends Activity {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		Log.i(TAG, "onCreate");
 		this.setContentView(R.layout.result_view);
 		tv = (TextView) findViewById(R.id.ocr_results);
 		iv = (ImageView) findViewById(R.id.cropped_image);

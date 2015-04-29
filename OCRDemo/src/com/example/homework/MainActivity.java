@@ -27,20 +27,42 @@ import android.view.View.OnClickListener;
 import android.widget.ImageView;
 
 public class MainActivity extends Activity {
+
+	public static final String ALBUM = "OCR";
+	public static final String OCR_CONTENT = "OCR_CONTENT";
+
 	private static final String TAG = "MainActivity";
 
 	private static final int REQUEST_IMAGE_CAPTURE = 1;
 	private static final int REQUEST_IMAGE_CROP = 2;
-	private String lang = "chi_sim";
+	private String lang = "eng";
+	private String crop_intent = "com.android.camera.action.CROP";
 
 	private ImageView iv;
 
-	public static final String ALBUM = "OCR";
-	public static final String DATA_PATH = Environment
-			.getExternalStorageDirectory().toString() + "/OCR/";
-	public static final String OCR_CONTENT = "OCR_CONTENT";
-	public static final String IMAGE = MainActivity.DATA_PATH + "/ocr.jpg";
-	public static final String IMAGE_CROP = MainActivity.DATA_PATH + "/crop.jpg";
+	private static final String TESSDATA = "tessdata";
+	private static final String IMAGENAME = "ocr.jpg";
+	private static final String CROPNAME = "crop.jpg";
+
+	private static final String DATA_PATH = Environment
+			.getExternalStorageDirectory().toString() + "/" + ALBUM + "/";
+	private static final String DATA_PATH_TESSDATA = DATA_PATH + TESSDATA + "/";
+
+	public static final String IMAGE = MainActivity.DATA_PATH + IMAGENAME;
+	private static final String IMAGE_CROP = MainActivity.DATA_PATH + CROPNAME;
+
+	private final String traineddata_path = DATA_PATH_TESSDATA + lang
+			+ ".traineddata";
+	private final String asset_tessdata = "tessdata/" + lang + ".traineddata";
+	
+	private static final boolean IFCROP = true;
+
+	private int crop_aspectX = 2;
+	private int crop_aspectY = 1;
+	private int output_X = 256;
+	private int output_Y = 128;
+	
+	private int inSampleSize = 4;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -61,7 +83,7 @@ public class MainActivity extends Activity {
 	}
 
 	private void checkAndCopyFiles() {
-		String[] paths = new String[] { DATA_PATH, DATA_PATH + "tessdata/" };
+		String[] paths = new String[] { DATA_PATH, DATA_PATH_TESSDATA };
 		for (String path : paths) {
 			File dir = new File(path);
 			if (!dir.exists()) {
@@ -75,15 +97,11 @@ public class MainActivity extends Activity {
 			}
 		}
 
-		String traineddata_path = DATA_PATH + "tessdata/" + lang
-				+ ".traineddata";
 		if (!(new File(traineddata_path)).exists()) {
 			try {
 				AssetManager assetManager = getAssets();
-				InputStream in = assetManager.open("tessdata/" + lang
-						+ ".traineddata");
-				OutputStream os = new FileOutputStream(DATA_PATH + "tessdata/"
-						+ lang + ".traineddata");
+				InputStream in = assetManager.open(asset_tessdata);
+				OutputStream os = new FileOutputStream(traineddata_path);
 
 				// Transfer bytes from in to out
 				byte[] buf = new byte[1024];
@@ -97,7 +115,7 @@ public class MainActivity extends Activity {
 				Log.v(TAG, "Copied " + lang + " traineddata");
 			} catch (IOException e) {
 				Log.e(TAG,
-						"Was unable to copy " + lang + " traineddata "
+						"unable to copy " + lang + " traineddata "
 								+ e.toString());
 			}
 		}
@@ -144,28 +162,25 @@ public class MainActivity extends Activity {
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		Log.i(TAG, "onActivityResult");
-		Log.i(TAG, String.valueOf(resultCode));
 		if (resultCode == RESULT_OK
 				&& requestCode == MainActivity.REQUEST_IMAGE_CAPTURE) {
-			Log.i(TAG, "capture return");
-			Intent intent = new Intent("com.android.camera.action.CROP");
+			Intent intent = new Intent(crop_intent);
 			Uri uri = Uri.fromFile(new File(IMAGE));
 			intent.setDataAndType(uri, "image/*");
-			intent.putExtra("crop", "true");
-			intent.putExtra("aspectX", 2);
-			intent.putExtra("aspectY", 1);
-			intent.putExtra("outputX", 256);
-			intent.putExtra("outputY", 128);
-			
-			File tempFile = new File(IMAGE_CROP);
-			intent.putExtra("output", Uri.fromFile(tempFile));
+			intent.putExtra("crop", IFCROP);
+			intent.putExtra("aspectX", crop_aspectX);
+			intent.putExtra("aspectY", crop_aspectY);
+			intent.putExtra("outputX", output_X);
+			intent.putExtra("outputY", output_Y);
+
+			File croppedFile = new File(IMAGE_CROP);
+			intent.putExtra("output", Uri.fromFile(croppedFile));
 			intent.putExtra("outputFormat", "JPEG");
 			intent.putExtra("return-data", true);
 			startActivityForResult(intent, REQUEST_IMAGE_CROP);
 
 		} else if (resultCode == Activity.RESULT_OK
 				&& requestCode == MainActivity.REQUEST_IMAGE_CROP) {
-			Log.i(TAG, "crop return");
 			ocr_process(data);
 		} else {
 			Log.v(TAG, "User cancelled");
@@ -174,9 +189,9 @@ public class MainActivity extends Activity {
 
 	private void ocr_process(Intent data) {
 		Log.i(TAG, "on ocr_process");
-		
+
 		BitmapFactory.Options options = new BitmapFactory.Options();
-		options.inSampleSize = 4;
+		options.inSampleSize = inSampleSize;
 		Bitmap bitmap = BitmapFactory.decodeFile(IMAGE_CROP, options);
 
 		try {
@@ -226,7 +241,7 @@ public class MainActivity extends Activity {
 		TessBaseAPI baseApi = new TessBaseAPI();
 		baseApi.setDebug(true);
 		baseApi.init(DATA_PATH, lang);
-		baseApi.setPageSegMode(TessBaseAPI.PageSegMode.PSM_AUTO_ONLY);
+		baseApi.setPageSegMode(TessBaseAPI.PageSegMode.PSM_AUTO_OSD);
 		baseApi.setImage(bitmap);
 		String recognizedText = baseApi.getUTF8Text();
 		baseApi.end();
