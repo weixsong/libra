@@ -19,9 +19,6 @@ import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.view.View.OnClickListener;
-import android.widget.ImageView;
 
 public class MainActivity extends Activity {
 
@@ -31,9 +28,7 @@ public class MainActivity extends Activity {
 	private static final String TAG = "MainActivity";
 
 	private static final int REQUEST_IMAGE_CAPTURE = 1;
-	public static String LANG = "eng";
-
-	private ImageView iv;
+	public static String LANG = "chi_sim";
 
 	private static final String TESSDATA = "tessdata";
 	private static final String IMAGENAME = "ocr.jpg";
@@ -58,18 +53,9 @@ public class MainActivity extends Activity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main_activity);
-		iv = (ImageView) findViewById(R.id.imageView1);
 
 		// check and copy files
 		checkAndCopyFiles();
-
-		iv.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View view) {
-				dispatchTakePictureIntent();
-			}
-		});
 
 		ocr = new TesstwoOCR();
 	}
@@ -128,6 +114,11 @@ public class MainActivity extends Activity {
 		int id = item.getItemId();
 		if (id == R.id.open_camera) {
 			dispatchTakePictureIntent();
+			return true;
+		}
+		
+		if (id == R.id.setting) {
+			// TODO: setting which language to use
 			return true;
 		}
 
