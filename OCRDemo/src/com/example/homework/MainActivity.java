@@ -9,6 +9,7 @@ import java.io.OutputStream;
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
@@ -16,12 +17,14 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MainActivity extends Activity {
 
@@ -31,7 +34,8 @@ public class MainActivity extends Activity {
 	private static final String TAG = "MainActivity";
 
 	private static final int REQUEST_IMAGE_CAPTURE = 1;
-	public static String LANG = "eng";
+	public static String LANG_EN = "eng";
+	public static String LANG_ZH = "chi_sim";
 
 	private static final String TESSDATA = "tessdata";
 	private static final String IMAGENAME = "ocr.jpg";
@@ -42,12 +46,11 @@ public class MainActivity extends Activity {
 
 	public static final String IMAGE_PATH = MainActivity.DATA_PATH + IMAGENAME;
 
-	private final String traineddata_path = DATA_PATH_TESSDATA + LANG
-			+ ".traineddata";
-	private final String asset_tessdata = "tessdata/" + LANG + ".traineddata";
-
 	private ProgressDialog mProgressDialog;
 	private TesstwoOCR ocr;
+
+	private String[] langs;
+	private String lang;
 
 	private int targetW = 800;
 	private int targetH = 600;
@@ -63,10 +66,34 @@ public class MainActivity extends Activity {
 		tv_ocr_results = (TextView) findViewById(R.id.ocr_results);
 		imageView = (ImageView) findViewById(R.id.ocr_image);
 
+		langs = getResources().getStringArray(R.array.langs);
+
 		// check and copy files
 		checkAndCopyFiles();
-
 		ocr = new TesstwoOCR();
+	}
+
+	@Override
+	protected void onResume() {
+		super.onResume();
+		Log.i(TAG, "onResume");
+
+		SharedPreferences sharedPref = PreferenceManager
+				.getDefaultSharedPreferences(this);
+		lang = sharedPref.getString(SettingActivity.LANG, "");
+		Log.i(TAG, lang);
+
+		if (lang == "") {
+			lang = LANG_EN;
+		}
+
+		if (lang == LANG_EN) {
+			Toast.makeText(this, "OCR in" + LANG_EN, Toast.LENGTH_SHORT).show();
+		} else if (lang == LANG_ZH) {
+			Toast.makeText(this, "OCR in" + LANG_ZH, Toast.LENGTH_SHORT).show();
+		} else {
+			// nothing now
+		}
 	}
 
 	private void checkAndCopyFiles() {
@@ -84,26 +111,32 @@ public class MainActivity extends Activity {
 			}
 		}
 
-		if (!(new File(traineddata_path)).exists()) {
-			try {
-				AssetManager assetManager = getAssets();
-				InputStream in = assetManager.open(asset_tessdata);
-				OutputStream os = new FileOutputStream(traineddata_path);
+		for (String lang : langs) {
+			String traineddata_path = DATA_PATH_TESSDATA + lang
+					+ ".traineddata";
+			String asset_tessdata = "tessdata/" + lang + ".traineddata";
 
-				// Transfer bytes from in to out
-				byte[] buf = new byte[1024];
-				int len;
-				while ((len = in.read(buf)) > 0) {
-					os.write(buf, 0, len);
+			if (!(new File(traineddata_path)).exists()) {
+				try {
+					AssetManager assetManager = getAssets();
+					InputStream in = assetManager.open(asset_tessdata);
+					OutputStream os = new FileOutputStream(traineddata_path);
+
+					// Transfer bytes from in to out
+					byte[] buf = new byte[1024];
+					int len;
+					while ((len = in.read(buf)) > 0) {
+						os.write(buf, 0, len);
+					}
+					in.close();
+					os.close();
+
+					Log.v(TAG, "Copied " + lang + " traineddata");
+				} catch (IOException e) {
+					Log.e(TAG,
+							"unable to copy " + lang + " traineddata "
+									+ e.toString());
 				}
-				in.close();
-				os.close();
-
-				Log.v(TAG, "Copied " + LANG + " traineddata");
-			} catch (IOException e) {
-				Log.e(TAG,
-						"unable to copy " + LANG + " traineddata "
-								+ e.toString());
 			}
 		}
 	}
@@ -127,7 +160,8 @@ public class MainActivity extends Activity {
 		}
 
 		if (id == R.id.setting) {
-			// TODO: setting which language to use
+			Intent intent = new Intent(this, SettingActivity.class);
+			startActivity(intent);
 			return true;
 		}
 
@@ -192,13 +226,13 @@ public class MainActivity extends Activity {
 		new Thread(new Runnable() {
 			public void run() {
 
-				final String result = ocr.doOCR(bitmap);
+				final String result = ocr.doOCR(bitmap, lang);
 				runOnUiThread(new Runnable() {
 					@Override
 					public void run() {
-						new AsyncImageLoader().execute(MainActivity.IMAGE_PATH);
 						tv_ocr_results.setText(result);
-						mProgressDialog.dismiss();
+						new AsyncImageLoader().execute(MainActivity.IMAGE_PATH);
+
 					}
 				});
 
@@ -219,6 +253,11 @@ public class MainActivity extends Activity {
 		@Override
 		protected void onPostExecute(Bitmap bitmap) {
 			Log.i(TAG, "onPostExecute");
+			if (mProgressDialog != null) {
+				mProgressDialog.dismiss();
+				mProgressDialog= null;
+			}
+
 			imageView.setImageBitmap(bitmap);
 		}
 

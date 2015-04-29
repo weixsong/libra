@@ -4,5 +4,16 @@
     <string name="app_name">OCRDemo</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
+    <string name="lang_default">eng</string>
+    <string name="lang_pref_tile">lang</string>
+
+    <string-array name="langs">
+        <item>eng</item>
+        <item>chi_sim</item>
+    </string-array>
+    <string-array name="langs_value">
+        <item>eng</item>
+        <item>chi_sim</item>
+    </string-array>
 
 </resources>
