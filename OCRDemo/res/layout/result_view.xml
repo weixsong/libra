@@ -18,7 +18,7 @@
         android:id="@+id/cropped_image"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="7"
+        android:layout_weight="5"
         android:scaleType="centerInside"
         android:src="@drawable/ic_launcher" />
 
@@ -31,17 +31,15 @@
         android:gravity="center_vertical"
         android:text="OCR result" />
 
-    <EditText
+    <TextView
         android:id="@+id/ocr_results"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="3"
+        android:layout_weight="5"
         android:background="#AEEEEE"
         android:ems="10"
-        android:enabled="false"
-        android:inputType="textMultiLine" >
-
-        <requestFocus />
-    </EditText>
+        android:textIsSelectable="true" 
+        android:scrollbars="vertical">
+    </TextView>
 
 </LinearLayout>

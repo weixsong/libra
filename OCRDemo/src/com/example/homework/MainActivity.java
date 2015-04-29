@@ -6,9 +6,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import com.googlecode.tesseract.android.TessBaseAPI;
-
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.content.res.AssetManager;
 import android.graphics.Bitmap;
@@ -34,35 +33,25 @@ public class MainActivity extends Activity {
 	private static final String TAG = "MainActivity";
 
 	private static final int REQUEST_IMAGE_CAPTURE = 1;
-	private static final int REQUEST_IMAGE_CROP = 2;
-	private String lang = "eng";
-	private String crop_intent = "com.android.camera.action.CROP";
+	public static String LANG = "eng";
 
 	private ImageView iv;
 
 	private static final String TESSDATA = "tessdata";
 	private static final String IMAGENAME = "ocr.jpg";
-	private static final String CROPNAME = "crop.jpg";
 
-	private static final String DATA_PATH = Environment
+	public static final String DATA_PATH = Environment
 			.getExternalStorageDirectory().toString() + "/" + ALBUM + "/";
 	private static final String DATA_PATH_TESSDATA = DATA_PATH + TESSDATA + "/";
 
-	public static final String IMAGE = MainActivity.DATA_PATH + IMAGENAME;
-	private static final String IMAGE_CROP = MainActivity.DATA_PATH + CROPNAME;
+	public static final String IMAGE_PATH = MainActivity.DATA_PATH + IMAGENAME;
 
-	private final String traineddata_path = DATA_PATH_TESSDATA + lang
+	private final String traineddata_path = DATA_PATH_TESSDATA + LANG
 			+ ".traineddata";
-	private final String asset_tessdata = "tessdata/" + lang + ".traineddata";
-	
-	private static final boolean IFCROP = true;
+	private final String asset_tessdata = "tessdata/" + LANG + ".traineddata";
 
-	private int crop_aspectX = 2;
-	private int crop_aspectY = 1;
-	private int output_X = 256;
-	private int output_Y = 128;
-	
-	private int inSampleSize = 4;
+	private ProgressDialog mProgressDialog;
+	private TesstwoOCR ocr;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -80,6 +69,8 @@ public class MainActivity extends Activity {
 				dispatchTakePictureIntent();
 			}
 		});
+
+		ocr = new TesstwoOCR();
 	}
 
 	private void checkAndCopyFiles() {
@@ -112,10 +103,10 @@ public class MainActivity extends Activity {
 				in.close();
 				os.close();
 
-				Log.v(TAG, "Copied " + lang + " traineddata");
+				Log.v(TAG, "Copied " + LANG + " traineddata");
 			} catch (IOException e) {
 				Log.e(TAG,
-						"unable to copy " + lang + " traineddata "
+						"unable to copy " + LANG + " traineddata "
 								+ e.toString());
 			}
 		}
@@ -148,7 +139,7 @@ public class MainActivity extends Activity {
 		// Ensure that there's a camera activity to handle the intent
 		if (intent.resolveActivity(getPackageManager()) != null) {
 			// Create the File where the photo should go
-			File photoFile = new File(IMAGE);
+			File photoFile = new File(IMAGE_PATH);
 			// Continue only if the File was successfully created
 			if (photoFile != null) {
 				intent.putExtra(MediaStore.EXTRA_OUTPUT,
@@ -164,92 +155,58 @@ public class MainActivity extends Activity {
 		Log.i(TAG, "onActivityResult");
 		if (resultCode == RESULT_OK
 				&& requestCode == MainActivity.REQUEST_IMAGE_CAPTURE) {
-			Intent intent = new Intent(crop_intent);
-			Uri uri = Uri.fromFile(new File(IMAGE));
-			intent.setDataAndType(uri, "image/*");
-			intent.putExtra("crop", IFCROP);
-			intent.putExtra("aspectX", crop_aspectX);
-			intent.putExtra("aspectY", crop_aspectY);
-			intent.putExtra("outputX", output_X);
-			intent.putExtra("outputY", output_Y);
-
-			File croppedFile = new File(IMAGE_CROP);
-			intent.putExtra("output", Uri.fromFile(croppedFile));
-			intent.putExtra("outputFormat", "JPEG");
-			intent.putExtra("return-data", true);
-			startActivityForResult(intent, REQUEST_IMAGE_CROP);
-
-		} else if (resultCode == Activity.RESULT_OK
-				&& requestCode == MainActivity.REQUEST_IMAGE_CROP) {
-			ocr_process(data);
+			ocr_process();
 		} else {
 			Log.v(TAG, "User cancelled");
 		}
 	}
 
-	private void ocr_process(Intent data) {
+	private void ocr_process() {
 		Log.i(TAG, "on ocr_process");
 
+		int targetW = 800;
+		int targetH = 600;
+
 		BitmapFactory.Options options = new BitmapFactory.Options();
-		options.inSampleSize = inSampleSize;
-		Bitmap bitmap = BitmapFactory.decodeFile(IMAGE_CROP, options);
+		options.inJustDecodeBounds = true;
+		BitmapFactory.decodeFile(IMAGE_PATH, options);
+		int photoW = options.outWidth;
+		int photoH = options.outHeight;
 
-		try {
-			ExifInterface exif = new ExifInterface(IMAGE);
-			int exifOrientation = exif.getAttributeInt(
-					ExifInterface.TAG_ORIENTATION,
-					ExifInterface.ORIENTATION_NORMAL);
+		// Determine how much to scale down the image
+		int scaleFactor = Math.min(photoW / targetW, photoH / targetH);
+		options.inJustDecodeBounds = false;
+		options.inSampleSize = scaleFactor << 1;
+		options.inPurgeable = true;
 
-			Log.v(TAG, "Orient: " + exifOrientation);
+		Bitmap bitmap = BitmapFactory.decodeFile(IMAGE_PATH, options);
+		doOCR(bitmap);
+	}
 
-			int rotate = 0;
-			switch (exifOrientation) {
-			case ExifInterface.ORIENTATION_ROTATE_90:
-				rotate = 90;
-				break;
-			case ExifInterface.ORIENTATION_ROTATE_180:
-				rotate = 180;
-				break;
-			case ExifInterface.ORIENTATION_ROTATE_270:
-				rotate = 270;
-				break;
-			}
-
-			Log.v(TAG, "Rotation: " + rotate);
-
-			if (rotate != 0) {
-				// Getting width & height of the given image.
-				int w = bitmap.getWidth();
-				int h = bitmap.getHeight();
-
-				// Setting pre rotate
-				Matrix mtx = new Matrix();
-				mtx.preRotate(rotate);
-
-				// Rotating Bitmap
-				bitmap = Bitmap.createBitmap(bitmap, 0, 0, w, h, mtx, false);
-			}
-
-			// Convert to ARGB_8888, required by tess
-			bitmap = bitmap.copy(Bitmap.Config.ARGB_8888, true);
-
-		} catch (IOException e) {
-			Log.e(TAG, "Couldn't correct orientation: " + e.toString());
+	private void doOCR(final Bitmap bitmap) {
+		if (mProgressDialog == null) {
+			mProgressDialog = ProgressDialog.show(this, "Processing",
+					"Doing OCR...", true);
+		} else {
+			mProgressDialog.show();
 		}
 
-		Log.v(TAG, "BaseApi initializing...");
-		TessBaseAPI baseApi = new TessBaseAPI();
-		baseApi.setDebug(true);
-		baseApi.init(DATA_PATH, lang);
-		baseApi.setPageSegMode(TessBaseAPI.PageSegMode.PSM_AUTO_OSD);
-		baseApi.setImage(bitmap);
-		String recognizedText = baseApi.getUTF8Text();
-		baseApi.end();
+		new Thread(new Runnable() {
+			public void run() {
 
-		recognizedText = recognizedText.trim();
+				final String result = ocr.doOCR(bitmap);
+				runOnUiThread(new Runnable() {
+					@Override
+					public void run() {
+						Intent intent = new Intent(MainActivity.this,
+								ResultViewer.class);
+						intent.putExtra(OCR_CONTENT, result);
+						MainActivity.this.startActivity(intent);
+						mProgressDialog.dismiss();
+					}
+				});
 
-		Intent intent = new Intent(this, ResultViewer.class);
-		intent.putExtra(OCR_CONTENT, recognizedText);
-		this.startActivity(intent);
+			};
+		}).start();
 	}
 }

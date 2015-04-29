@@ -27,7 +27,7 @@ public class ResultViewer extends Activity {
 		String msg = this.getIntent().getStringExtra(MainActivity.OCR_CONTENT);
 		tv.setText(msg);
 		
-		new AsyncImageLoader().execute(MainActivity.IMAGE);
+		new AsyncImageLoader().execute(MainActivity.IMAGE_PATH);
 	}
 
 	private class AsyncImageLoader extends AsyncTask<String, Integer, Bitmap> {
