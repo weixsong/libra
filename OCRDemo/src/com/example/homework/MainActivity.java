@@ -50,6 +50,9 @@ public class MainActivity extends Activity {
 
 	private ProgressDialog mProgressDialog;
 	private TesstwoOCR ocr;
+	
+	private int targetW = 800;
+	private int targetH = 600;
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -161,9 +164,6 @@ public class MainActivity extends Activity {
 
 	private void ocr_process() {
 		Log.i(TAG, "on ocr_process");
-
-		int targetW = 800;
-		int targetH = 600;
 
 		BitmapFactory.Options options = new BitmapFactory.Options();
 		options.inJustDecodeBounds = true;
