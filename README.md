@@ -62,6 +62,7 @@ This OCRDemo project is just a very simple project that show you how to do OCR o
 
 # OCRDemo effectiveness
 Currently for English OCR the effectiveness is pretty good, go to the screenshot folder to see the screenshot.
+
 This project is tested on my Xiaomi phone (RedMi2)
 
 # Say Goodbye to Image Process
