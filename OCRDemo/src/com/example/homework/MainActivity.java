@@ -83,14 +83,14 @@ public class MainActivity extends Activity {
 		lang = sharedPref.getString(SettingActivity.LANG, "");
 		Log.i(TAG, lang);
 
-		if (lang == "") {
+		if (lang.equals("")) {
 			lang = LANG_EN;
 		}
 
-		if (lang == LANG_EN) {
-			Toast.makeText(this, "OCR in" + LANG_EN, Toast.LENGTH_SHORT).show();
-		} else if (lang == LANG_ZH) {
-			Toast.makeText(this, "OCR in" + LANG_ZH, Toast.LENGTH_SHORT).show();
+		if (lang.equals(LANG_EN)) {
+			Toast.makeText(this, "OCR in " + LANG_EN, Toast.LENGTH_SHORT).show();
+		} else if (lang.equals(LANG_ZH)) {
+			Toast.makeText(this, "OCR in " + LANG_ZH, Toast.LENGTH_SHORT).show();
 		} else {
 			// nothing now
 		}
@@ -216,6 +216,7 @@ public class MainActivity extends Activity {
 	}
 
 	private void doOCR(final Bitmap bitmap) {
+		Log.i(TAG, "on doOCR");
 		if (mProgressDialog == null) {
 			mProgressDialog = ProgressDialog.show(this, "Processing",
 					"Doing OCR...", true);
@@ -226,6 +227,7 @@ public class MainActivity extends Activity {
 		new Thread(new Runnable() {
 			public void run() {
 
+				Log.i(TAG, "thread running *****************************");
 				final String result = ocr.doOCR(bitmap, lang);
 				runOnUiThread(new Runnable() {
 					@Override
@@ -235,6 +237,7 @@ public class MainActivity extends Activity {
 
 					}
 				});
+				Log.i(TAG, "thread stopped *****************************");
 
 			};
 		}).start();

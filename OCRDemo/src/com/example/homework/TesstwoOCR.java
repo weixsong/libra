@@ -28,10 +28,10 @@ public class TesstwoOCR {
 		
 		String result = "";
 		
-		if (lang == MainActivity.LANG_EN) {
+		if (lang.equals(MainActivity.LANG_EN)) {
 			ocr_eng.setImage(bitmap);
 			result = ocr_eng.getUTF8Text();
-		} else if (lang == MainActivity.LANG_ZH) {
+		} else if (lang.equals(MainActivity.LANG_ZH)) {
 			ocr_chi.setImage(bitmap);
 			result = ocr_chi.getUTF8Text();
 		} else {
