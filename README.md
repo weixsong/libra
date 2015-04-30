@@ -71,3 +71,21 @@ This project is tested on my Xiaomi phone (RedMi2)
 
 # Say Goodbye to Image Process
 Maybe this repo is my last image process related project, right now I have graduated for nearly one year and working on NLP, ML related work in Oracle. I really like this NLP related work, and maybe in the future I don't have time to do any image process work. Then, goodbye image process.
+
+# DailySelfieDemo
+DailySelfieDemo is a complex Android app demo, please notice that this project has no relation with image process on Android platform, I put this project here just to give an example of how to develop a relatively complex Android app.
+
+By take a look of this DailySelfDemo project, you could understand the mechanism of:
+
+* 1. Android Intent and how to start another activity.
+* 2. How to use AsyncTask to do async work.
+* 3. How to load image async.
+* 4. How to store image on phone stroage.
+* 5. How to take image by camera.
+* 6. How to use NotificationManager in Android.
+* 7. How to use BroadcastReceiver.
+* 8. How to create Service.
+* 9. How to create customized Adapter.
+* 10. How to start service on Android bootup by BroadcastReceiver.
+
+What is bad is that I'm using MIROM, this ROM blocks system android.intent.action.BOOT_COMPLETED signal, so I could not start service after the system boot.
