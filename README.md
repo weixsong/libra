@@ -53,6 +53,8 @@ The default trainning data is english OCR data, and this default trainning data 
   change "eng" into the corresponding language, such as "chi_sim".
   And don't forget to put the downloaded trainning data into asset fold of this project.
 
+  Currently this project contains two languages(simplied Chinese, English), you can change the language by set setting, and if you just want to contain only on language, you could download the corresponding trained data and hard code the lang variable: private String lang = "you lang". If you want to support mulit language, please add the lang in res->values->string.xml by referencing what I've done, and please don't forget update TesstwoOCR.java file to contain other language OCR detection code.
+
 * Step 4: after imported the tess-two project, remember reference the tess-two project in this OCRDemo project, otherwise it could not found the referenced API. 
 Update the property of this OCRDemo project, and set the library reference to tess-two project.
 
@@ -61,7 +63,9 @@ Update the property of this OCRDemo project, and set the library reference to te
 This OCRDemo project is just a very simple project that show you how to do OCR on Android platform. You can take a look of this project and know how to do OCR on Android platform quickly. And you can play whatever you want by OCR on Android, and maybe you could come up with some wonderful projects.
 
 # OCRDemo effectiveness
-Currently for English OCR the effectiveness is pretty good, go to the screenshot folder to see the screenshot.
+Currently for English OCR the effectiveness is pretty good, go to the screenshot folder to see the screenshot. 
+
+English results are better than Chinese results. And it will take a long time to run OCR if there are too many words in the image.
 
 This project is tested on my Xiaomi phone (RedMi2)
 
