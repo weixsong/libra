@@ -16,25 +16,24 @@ public class ImageViewerActivity extends Activity {
 	private ImageView iv;
 	private int viewWidth;
 	private int viewHeight;
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		this.setContentView(R.layout.image_view);
-		
+
 		iv = (ImageView)findViewById(R.id.imageView);
-		
-		
+
 		Toast.makeText(this, "image loading", Toast.LENGTH_SHORT).show();
 		imagePath = MainActivity.FOLDERPATH + this.getIntent().getStringExtra(RecordAdapter.DATA);
 	}
-	
+
 	@Override
 	public void onResume() {
 		super.onResume();
 		// TODO	
 	}
-	
+
 	@Override
 	 public void onWindowFocusChanged(boolean hasFocus) {
 		// TODO Auto-generated method stub
@@ -44,12 +43,12 @@ public class ImageViewerActivity extends Activity {
 		viewHeight = iv.getHeight();
 		Log.i(TAG, String.valueOf(viewWidth));
 		Log.i(TAG, String.valueOf(viewHeight));
-		
+
 		// async load images
 		AsyncImageLoader ail = new AsyncImageLoader(this);
 		ail.execute(imagePath);
 	 }
-	
+
 	private class AsyncImageLoader extends AsyncTask<String, Integer, Bitmap> {
 		private Context mContext;
 		
@@ -62,13 +61,13 @@ public class ImageViewerActivity extends Activity {
 			Bitmap bitmap = loadImage(params[0]);
 			return bitmap;
 		}
-		
+
 		@Override
 		protected void onPostExecute(Bitmap result) {
 			iv.setImageBitmap(result);
 			Toast.makeText(mContext, "image load done", Toast.LENGTH_SHORT).show();
 		}
-		
+
 		private Bitmap loadImage(String filePath) {
 			BitmapFactory.Options bmOptions = new BitmapFactory.Options();
 		    bmOptions.inJustDecodeBounds = true;

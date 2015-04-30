@@ -86,7 +86,7 @@ public class RecordAdapter extends BaseAdapter{
 	@Override
 	public View getView(int position, View convertView, ViewGroup parent) {
 		// TODO Auto-generated method stub
-		Map<String, Object> map = (Map<String, Object>)getItem(position);
+		Map<String, Object> map = (Map<String, Object>) getItem(position);
 		
 		RelativeLayout layout = (RelativeLayout)convertView;
 		if (convertView == null) {
@@ -94,12 +94,12 @@ public class RecordAdapter extends BaseAdapter{
 			layout = (RelativeLayout)inflater.inflate(R.layout.recored_item, null);
 		}
 		
-		final String name = (String)map.get(KEY_NAME);
-		final TextView titleView = (TextView)layout.findViewById(R.id.image_name);
+		final String name = (String) map.get(KEY_NAME);
+		final TextView titleView = (TextView) layout.findViewById(R.id.image_name);
 		titleView.setText(name);
 		
-		final ImageView imageView = (ImageView)layout.findViewById(R.id.image);
-		imageView.setImageBitmap((Bitmap)map.get(KEY_BITMAP));
+		final ImageView imageView = (ImageView) layout.findViewById(R.id.image);
+		imageView.setImageBitmap((Bitmap) map.get(KEY_BITMAP));
 		
 		imageView.setOnClickListener(new OnClickListener() {
 			@Override
