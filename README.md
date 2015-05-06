@@ -97,7 +97,7 @@ Update the property of this OCRDemo project, and set the library reference to te
 
 This OCRDemo project is just a very simple project that show you how to do OCR on Android platform. You can take a look of this project and know how to do OCR on Android platform quickly. And you can play whatever you want by OCR on Android, and maybe you could come up with some wonderful projects.
 
-# OCRDemo effectiveness
+## OCRDemo effectiveness
 Currently for English OCR the effectiveness is pretty good, go to the screenshot folder to see the screenshot. 
 
 English results are better than Chinese results. And it will take a long time to run OCR if there are too many words in the image.
