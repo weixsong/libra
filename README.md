@@ -39,9 +39,9 @@ Setup this project:
  * 5. If you're using Windows, open the property of NDKDemo project, click C/C++ Build, in Builder setting, change ${NDKROOT}/ndk-build to ${NDKROOT}/ndk-build.cmd
  * 6. Still open the property, click C/C++ General -> Path and Symbols, in the include tab, select GNU C++, and find the variable such as "home/wesong/software/OpenCV-2.4.10-android-sdk/sdk/native/jni/include", change this include directories to the OpenCV-2.4.10-android-sdk/sdk/native/jni/include of your opencv4android folder, this will make Eclipse be able to find the head files of opencv.
  * 7. Other include directories you need to pay attentation are:
- ** ${NDKROOT}/platforms/android-21/arch-arm/usr/include
- ** ${NDKROOT}/sources/cxx-stl/gnu-libstdc++/4.9/include
- ** ${NDKROOT}/sources/cxx-stl/gnu-libstdc++/4.9/libs/armeabi-v7a/include/bits
+    + ${NDKROOT}/platforms/android-21/arch-arm/usr/include
+    + ${NDKROOT}/sources/cxx-stl/gnu-libstdc++/4.9/include
+    + ${NDKROOT}/sources/cxx-stl/gnu-libstdc++/4.9/libs/armeabi-v7a/include/bits
 
 Then, you could build the NDKDemo project and run it on your mobile phone or AVD.
 If you encounter some problem, please goto http://blog.csdn.net/watkinsong/article/details/9849973 for more information.
