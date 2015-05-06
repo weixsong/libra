@@ -7,9 +7,44 @@ When combined native c/c++ code and java SDK of opencv, NDK will delete the thri
 this problem seems does not happen in Windows version of opencv4android, but happens in linux/unix version of 
 opencv4android, and this ugly bug confused me for nearly one day.
 
+# IDE Setup
+Currently Android Studio is famous for Android App development, But I'm not familiar with Android Stduio, so I'm still using Eclipse + ADT(Android Development Tools) to develop Android app. All the following setup instructions are based on Eclipse + ADT. If you're using Android Studio, please check out how to setup the IDE and help to updae this instructions.
+
+This IDE Setup is on the assumption that your want to do NDK development by using Opencv.
+If your just want to take a look project OCRDemo, you don't need to do the following setup. In other words, the following non-trivial setup steps are only useful for project NDKDemo and ASMAndroidDemo.
+
+To setup your development environment, please follow the instructions: http://blog.csdn.net/watkinsong/article/details/9849973
+Currently, this instruction is in Chinese, your can try to translate it with Google translator or something. Later I will provide detailed English version. And the following also contains some simple instructions.
+
+ * 1. Download Eclipse.
+ * 2. Install java on your OS(I'm using Ubuntu14.04LTS), and configure the System variables.
+ * 3. Install ADT which is used to develop Android project in Eclipse. Go to this link: http://developer.android.com/sdk/eclipse-adt.html  to download ADT tools. After download the ADT tools, open your Eclipse, and click Help->Install New Software..., then by archive install, please select all the components provided by ADT.
+ * 4. Configure Android SDK and create Android Virtual Machine, if your want to run your app on a real device, then you don't need to create Android Virtual Machine. This step is easy, just use the Android SDK and AVD manager, and also please download the corresponding Anroid SDK.
+ * 5. OPTIONAL, install CDT, if you select all the components in step 3, you don't need to do this step, but if you don't have CDT installed, please install CDT.
+ * 6. Download NDK (Native Development Kit):http://developer.android.com/sdk/ndk/index.html , extract the package and put it somewhere on your disk.
+ * 7. Download OpenCV4Android: http://sourceforge.net/projects/opencvlibrary/files/opencv-android/, extract the package and put it somewhere on your disk.
+
+Upto now, the IDE setup is basically done, but if you want to run the following projects, you still need to do someother change of the project property. What you need to change is included in each project's part. Just move on.
+
+
 # NDKDemo
 This project shows how to use NDK to develop native c/c++ code that invoked by jni in Android.
 Developed by opencv4android, but only use opencv c/c++ head file.
+
+Setup this project:
+ * 1. Goto https://github.com/weixsong/libra/blob/master/README.md#ide-setup, and following the instructions to setup IDE.
+ * 2. Import this NDKDemo project by Eclipse.
+ * 3. After imported this project, your may see some errors with this project, don't be afriad, just go to step 4, :).
+ * 4. Open the property of this NDKDemo project, click C/C++ Build -> Envrionment, change the variable NDKROOT, change the NDKROOT value to the folder of your unzipped NDK folder.
+ * 5. If you're using Windows, open the property of NDKDemo project, click C/C++ Build, in Builder setting, change ${NDKROOT}/ndk-build to ${NDKROOT}/ndk-build.cmd
+ * 6. Still open the property, click C/C++ General -> Path and Symbols, in the include tab, select GNU C++, and find the variable such as "home/wesong/software/OpenCV-2.4.10-android-sdk/sdk/native/jni/include", change this include directories to the OpenCV-2.4.10-android-sdk/sdk/native/jni/include of your opencv4android folder, this will make Eclipse be able to find the head files of opencv.
+ * 7. Other include directories you need to pay attentation are:
+    + ${NDKROOT}/platforms/android-21/arch-arm/usr/include
+    + ${NDKROOT}/sources/cxx-stl/gnu-libstdc++/4.9/include
+    + ${NDKROOT}/sources/cxx-stl/gnu-libstdc++/4.9/libs/armeabi-v7a/include/bits
+
+Then, you could build the NDKDemo project and run it on your mobile phone or AVD.
+If you encounter some problem, please goto http://blog.csdn.net/watkinsong/article/details/9849973 for more information.
 
 # ASMAndroidDemo
 This project combined native c/cpp code and opencv java SDK to do ASM points location and face detection.
@@ -62,7 +97,7 @@ Update the property of this OCRDemo project, and set the library reference to te
 
 This OCRDemo project is just a very simple project that show you how to do OCR on Android platform. You can take a look of this project and know how to do OCR on Android platform quickly. And you can play whatever you want by OCR on Android, and maybe you could come up with some wonderful projects.
 
-# OCRDemo effectiveness
+## OCRDemo effectiveness
 Currently for English OCR the effectiveness is pretty good, go to the screenshot folder to see the screenshot. 
 
 English results are better than Chinese results. And it will take a long time to run OCR if there are too many words in the image.
