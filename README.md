@@ -7,6 +7,15 @@ When combined native c/c++ code and java SDK of opencv, NDK will delete the thri
 this problem seems does not happen in Windows version of opencv4android, but happens in linux/unix version of 
 opencv4android, and this ugly bug confused me for nearly one day.
 
+# IDE Setup
+To setup your development environment, please follow the instructions: http://blog.csdn.net/watkinsong/article/details/9849973
+Currently, this instruction is in Chinese, your can try to translate it with Google translator or something. Later I will provide detailed English version. And the following also contains some simple instructions.
+
+ * 1. Download Eclipse.
+ * 2. Install java on your platform. (I'm using Ubuntu14.04LTS)
+ * 3. Install ADT which is used to develop c/c++ project in Eclipse. Go to this link: http://developer.android.com/sdk/eclipse-adt.html  to download ADT tools. After download the ADT tools, open your Eclipse, and click Help->Install New Software..., then by archive install, please select all the components provided by ADT.
+ * 4. 
+
 # NDKDemo
 This project shows how to use NDK to develop native c/c++ code that invoked by jni in Android.
 Developed by opencv4android, but only use opencv c/c++ head file.
