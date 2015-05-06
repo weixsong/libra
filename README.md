@@ -8,13 +8,24 @@ this problem seems does not happen in Windows version of opencv4android, but hap
 opencv4android, and this ugly bug confused me for nearly one day.
 
 # IDE Setup
+Currently Android Studio is famous for Android App development, But I'm not familiar with Android Stduio, so I'm still using Eclipse + ADT(Android Development Tools) to develop Android app. All the following setup instructions are based on Eclipse + ADT. If you're using Android Studio, please check out how to setup the IDE and help to updae this instructions.
+
+This IDE Setup is on the assumption that your want to do NDK development by using Opencv.
+If your just want to take a look project OCRDemo, you don't need to do the following setup. In other words, the following non-trivial setup steps are only useful for project NDKDemo and ASMAndroidDemo.
+
 To setup your development environment, please follow the instructions: http://blog.csdn.net/watkinsong/article/details/9849973
 Currently, this instruction is in Chinese, your can try to translate it with Google translator or something. Later I will provide detailed English version. And the following also contains some simple instructions.
 
  * 1. Download Eclipse.
- * 2. Install java on your platform. (I'm using Ubuntu14.04LTS)
- * 3. Install ADT which is used to develop c/c++ project in Eclipse. Go to this link: http://developer.android.com/sdk/eclipse-adt.html  to download ADT tools. After download the ADT tools, open your Eclipse, and click Help->Install New Software..., then by archive install, please select all the components provided by ADT.
- * 4. 
+ * 2. Install java on your OS(I'm using Ubuntu14.04LTS), and configure the System variables.
+ * 3. Install ADT which is used to develop Android project in Eclipse. Go to this link: http://developer.android.com/sdk/eclipse-adt.html  to download ADT tools. After download the ADT tools, open your Eclipse, and click Help->Install New Software..., then by archive install, please select all the components provided by ADT.
+ * 4. Configure Android SDK and create Android Virtual Machine, if your want to run your app on a real device, then you don't need to create Android Virtual Machine. This step is easy, just use the Android SDK and AVD manager, and also please download the corresponding Anroid SDK.
+ * 5. OPTIONAL, install CDT, if you select all the components in step 3, you don't need to do this step, but if you don't have CDT installed, please install CDT.
+ * 6. Download NDK (Native Development Kit):http://developer.android.com/sdk/ndk/index.html , extract the package and put it somewhere on your disk.
+ * 7. Download OpenCV4Android: http://sourceforge.net/projects/opencvlibrary/files/opencv-android/, extract the package and put it somewhere on your disk.
+
+Upto now, the IDE setup is basically done, but if you want to run the following projects, you still need to do someother change of the project property. What you need to change is included in each project's part. Just move on.
+
 
 # NDKDemo
 This project shows how to use NDK to develop native c/c++ code that invoked by jni in Android.
