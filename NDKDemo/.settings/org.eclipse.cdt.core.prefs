@@ -1,6 +1,6 @@
 eclipse.preferences.version=1
 environment/project/cdt.managedbuild.config.gnu.exe.debug.1925776962/NDKROOT/delimiter=\:
-environment/project/cdt.managedbuild.config.gnu.exe.debug.1925776962/NDKROOT/operation=append
-environment/project/cdt.managedbuild.config.gnu.exe.debug.1925776962/NDKROOT/value=/home/songwei/Softwares/android-ndk-r10d
+environment/project/cdt.managedbuild.config.gnu.exe.debug.1925776962/NDKROOT/operation=replace
+environment/project/cdt.managedbuild.config.gnu.exe.debug.1925776962/NDKROOT/value=/home/wesong/software/android-ndk-r10d
 environment/project/cdt.managedbuild.config.gnu.exe.debug.1925776962/append=true
 environment/project/cdt.managedbuild.config.gnu.exe.debug.1925776962/appendContributed=true
