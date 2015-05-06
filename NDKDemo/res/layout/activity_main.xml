@@ -7,7 +7,7 @@
      <Button android:layout_height="wrap_content"    
          android:layout_width="fill_parent"    
          android:id="@+id/btnNDK"    
-         android:text="convert to gray by native c/cpp code" />   
+         android:text="canny detect by native c/cpp code" />   
      <Button android:layout_height="wrap_content"    
          android:layout_width="fill_parent"    
          android:id="@+id/btnRestore"    
