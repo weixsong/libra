@@ -31,6 +31,12 @@ Upto now, the IDE setup is basically done, but if you want to run the following 
 This project shows how to use NDK to develop native c/c++ code that invoked by jni in Android.
 Developed by opencv4android, but only use opencv c/c++ head file.
 
+Setup this project:
+ * 1. Goto https://github.com/weixsong/libra/blob/master/README.md#ide-setup, and following the instructions to setup IDE.
+ * 2. Import this NDKDemo project by Eclipse.
+ * 3. After imported this project, your may see some errors with this project, don't be afriad, just go to step 4, :).
+ * 4. 
+
 # ASMAndroidDemo
 This project combined native c/cpp code and opencv java SDK to do ASM points location and face detection.
 ASMAndroidDemo defaultly use back camera, just because I don't have enough time to add function to call 
