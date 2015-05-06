@@ -42,6 +42,7 @@ Setup this project:
     + ${NDKROOT}/platforms/android-21/arch-arm/usr/include
     + ${NDKROOT}/sources/cxx-stl/gnu-libstdc++/4.9/include
     + ${NDKROOT}/sources/cxx-stl/gnu-libstdc++/4.9/libs/armeabi-v7a/include/bits
+ * 8. Change Android.mk file, line 8, change the line "include /home/wesong/software/OpenCV-2.4.10-android-sdk/sdk/native/jni/OpenCV.mk" to include your OpenCV.mk, find OpenCV.mk on your OpenCV4Android, and put the path here.
 
 Then, you could build the NDKDemo project and run it on your mobile phone or AVD.
 If you encounter some problem, please goto http://blog.csdn.net/watkinsong/article/details/9849973 for more information.
