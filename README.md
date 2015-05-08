@@ -70,6 +70,7 @@ Actually the orginal project of this demo that I developed one year ago support 
 and user could config to choose camera and choose use native c/c++ code or opencv4android java SDK, but now I don't have enough time, so here just developed a working demo, someone interested about this project could fork it and improve it.
 
 **IMPORTANT**: 
+
 My test devices are RedMi2 and XiaoMi3, the target ABI of these two phones are **armeabi** and **armeabi-v7a**, in order to make this project runable, you need to select correct libopencv_java.so according to your hardware platform, default **target ABI** is **amerabi**, if you are using other hardware platform, checkout what platform you are using and select **libopencv_java.so** from corresponding platform library that Opencv4Android has already built for you.
 Actually I encounted this problem when I install this project on RedMi2 but the **libopencv_java.so** is from other platform **amerabi-v7a**, and I have the runtime error such as java.lang.noclassdeffounderror.
 
