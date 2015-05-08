@@ -22,11 +22,9 @@
             android:orientation="horizontal" >
 
             <FrameLayout
-                android:background="#aaaaaa"
                 android:id="@+id/camera_preview"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:foregroundGravity="center"
                 android:layout_gravity="center_horizontal" />
 
         </LinearLayout>

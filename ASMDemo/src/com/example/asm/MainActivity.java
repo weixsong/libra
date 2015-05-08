@@ -29,12 +29,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
-import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 import android.widget.TextView;
 
@@ -120,13 +119,15 @@ public class MainActivity extends Activity implements PreviewCallback {
 
 			if (v == iv_canny && doubleClick) {
 				// start CannyActivity
-				Intent intent = new Intent(MainActivity.this, CannyViewActivity.class);
+				Intent intent = new Intent(MainActivity.this,
+						CannyViewActivity.class);
 				startActivity(intent);
 			}
 
 			if (v == iv_face_detect_img_view && doubleClick) {
 				// start FaceDetectActivity
-				Intent intent = new Intent(MainActivity.this, FaceDetectActivity.class);
+				Intent intent = new Intent(MainActivity.this,
+						FaceDetectActivity.class);
 				startActivity(intent);
 			}
 
@@ -140,9 +141,10 @@ public class MainActivity extends Activity implements PreviewCallback {
 					saveBitmap(asmBitmap);
 					Intent intent = new Intent();
 					intent.setAction(Intent.ACTION_VIEW);
-					intent.setDataAndType(Uri.parse("file://" + Params.ASMActivity.LOCAL_FILE), "image/*");
+					intent.setDataAndType(Uri.parse("file://"
+							+ Params.ASMActivity.LOCAL_FILE), "image/*");
 					startActivity(intent);
-				} 
+				}
 			}
 
 			if (v == btn_do_asm) {
@@ -156,7 +158,7 @@ public class MainActivity extends Activity implements PreviewCallback {
 			}
 		}
 	}
-	
+
 	private void saveBitmap(Bitmap bitmap) {
 		String dir_path = Environment.getExternalStorageDirectory()
 				.getAbsolutePath();
@@ -170,7 +172,7 @@ public class MainActivity extends Activity implements PreviewCallback {
 			if (file.exists()) {
 				file.delete();
 			}
-			
+
 			FileOutputStream out = new FileOutputStream(file);
 			bitmap.compress(Bitmap.CompressFormat.PNG, 100, out);
 			out.flush();
@@ -196,21 +198,19 @@ public class MainActivity extends Activity implements PreviewCallback {
 		mPreview = new CameraPreview(this, mCamera);
 		FrameLayout previewFrame = (FrameLayout) findViewById(R.id.camera_preview);
 
-//		LinearLayout linearLayout = new LinearLayout(this);
-//		linearLayout.setHorizontalGravity(LinearLayout.HORIZONTAL);
-//		linearLayout.addView(mPreview);
-		//LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+		FrameLayout.LayoutParams layoutParams = new FrameLayout.LayoutParams(
+				FrameLayout.LayoutParams.MATCH_PARENT,
+				FrameLayout.LayoutParams.MATCH_PARENT);
 
-		//previewFrame.setLayoutParams(layoutParams);
-
-		previewFrame.addView(mPreview);
+		layoutParams.gravity = Gravity.CENTER;
+		previewFrame.addView(mPreview, layoutParams);
 	}
 
 	@Override
 	protected void onPause() {
 		super.onPause();
 		Log.d(TAG, "on pause");
-		
+
 		try {
 			faceDetectThread.interrupt();
 		} catch (Exception e) {
@@ -246,12 +246,14 @@ public class MainActivity extends Activity implements PreviewCallback {
 		Mat src = new Mat();
 		Utils.bitmapToMat(bitmap, src);
 		src.copyTo(currentFrame);
-		
-		Log.d("com.example.asm.CameraPreview", "image size: w: " + src.width() + " h: " + src.height());
+
+		Log.d("com.example.asm.CameraPreview", "image size: w: " + src.width()
+				+ " h: " + src.height());
 
 		// do canny
 		Mat canny_mat = new Mat();
-		Imgproc.Canny(src, canny_mat, Params.CannyParams.THRESHOLD1, Params.CannyParams.THRESHOLD2);
+		Imgproc.Canny(src, canny_mat, Params.CannyParams.THRESHOLD1,
+				Params.CannyParams.THRESHOLD2);
 		Bitmap canny_bitmap = ImageUtils.mat2Bitmap(canny_mat);
 
 		iv_canny.setImageBitmap(canny_bitmap);
@@ -284,7 +286,7 @@ public class MainActivity extends Activity implements PreviewCallback {
 		if (points[0] == Params.ASMError.BAD_INPUT) {
 			Toast.makeText(MainActivity.this, "Cannot load image",
 					Toast.LENGTH_SHORT).show();
-		} else if ( points[0] == Params.ASMError.INIT_FAIL) {
+		} else if (points[0] == Params.ASMError.INIT_FAIL) {
 			Toast.makeText(MainActivity.this, "Error in stasm_search_single!",
 					Toast.LENGTH_SHORT).show();
 		} else if (points[0] == Params.ASMError.NO_FACE_FOUND) {
