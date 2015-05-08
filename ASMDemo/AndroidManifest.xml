@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    package="com.example.asm"
+    android:versionCode="1"
+    android:versionName="1.0" >
+
+    <uses-sdk
+        android:minSdkVersion="14"
+        android:targetSdkVersion="20" />
+
+    <uses-permission android:name="android.permission.CAMERA" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+
+    <uses-feature android:name="android.hardware.camera" />
+    <uses-feature android:name="android.hardware.camera.autofocus" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@drawable/ic_launcher"
+        android:label="@string/app_name"
+        android:logo="@drawable/ic_launcher"
+        android:testOnly="false"
+        android:theme="@style/AppTheme" >
+        <activity
+            android:name="com.example.asm.MainActivity"
+            android:label="@string/app_name" >
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name="com.example.asm.CannyViewActivity"
+            android:label="@string/canny_view" >
+        </activity>
+        <activity
+            android:name="com.example.asm.FaceDetectActivity"
+            android:label="@string/face_detect_view" >
+        </activity>
+        <activity
+            android:name="com.example.asm.AsmViewActivity"
+            android:label="@string/asm_view" >
+        </activity>
+    </application>
+
+</manifest>
