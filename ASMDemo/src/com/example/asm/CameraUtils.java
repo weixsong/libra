@@ -15,7 +15,9 @@ import android.util.Log;
 public class CameraUtils {
 	private static String TAG = "com.example.asm.CameraUtils";
 
-	/** A safe way to get an instance of the Camera object. */
+	/** 
+	 * A safe way to get an instance of the Camera object. 
+	 */
 	public static Camera getCameraInstance(Context context, int CameraId) {
 		Camera c = null;
 		if (!checkCameraHardware(context)) {
@@ -45,10 +47,10 @@ public class CameraUtils {
 		}
 	}
 
-	/** Set Camera Preview parameters to fit the ImageView Size */
 	/*
-	 * for we need to rotate the captured image by 90 degrees, so the passed in
-	 * parameter width is used as height no fault. Be noticed.
+	 * Set Camera Preview parameters to fit the ImageView Size for we need to
+	 * rotate the captured image by 90 degrees, so the passed in parameter width
+	 * is used as height no fault. Be noticed.
 	 */
 	public static boolean setCameraPreviewParameters(Camera camera, int width) {
 		if (camera == null) {
