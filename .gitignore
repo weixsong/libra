@@ -12,7 +12,7 @@
 # Generated files
 bin/
 gen/
-obj/
+local/
 Debug/
 
 # Gradle files
