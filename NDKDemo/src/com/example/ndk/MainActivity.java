@@ -10,16 +10,18 @@ import android.view.View;
 import android.widget.ImageView;
 
 public class MainActivity extends Activity {
-	/** Called when the activity is first created. */
+
 	ImageView imgView;
 	Button btnNDK, btnRestore;
+	
+	private String title = "Canny detect by NDK";
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-		this.setTitle("convert to gray by NDK");
+		this.setTitle(title);
 		btnRestore = (Button) this.findViewById(R.id.btnRestore);
 		btnRestore.setOnClickListener(new ClickEvent());
 		btnNDK = (Button) this.findViewById(R.id.btnNDK);
@@ -44,7 +46,8 @@ public class MainActivity extends Activity {
 				resultImg.setPixels(resultInt, 0, w, 0, 0, w, h);
 				long performance = System.currentTimeMillis() - current;
 				imgView.setImageBitmap(resultImg);
-				MainActivity.this.setTitle("NDK consumed: " + String.valueOf(performance) + " ms");
+				MainActivity.this.setTitle("NDK consumed: "
+						+ String.valueOf(performance) + " ms");
 			} else if (v == btnRestore) {
 				Bitmap img2 = ((BitmapDrawable) getResources().getDrawable(
 						R.drawable.lena)).getBitmap();
