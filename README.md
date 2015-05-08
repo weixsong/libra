@@ -7,6 +7,12 @@ When combined native c/c++ code and java SDK of opencv, NDK will delete the thri
 this problem seems does not happen in Windows version of opencv4android, but happens in linux/unix version of 
 opencv4android, and this ugly bug confused me for nearly one day.
 
+Projects in this repo:
+ * [NDKDemo](https://github.com/weixsong/libra#ndkdemo)
+ * [ASMDemo](https://github.com/weixsong/libra#asmandroiddemo)
+ * [OCRDemo](https://github.com/weixsong/libra#ocrdemo)
+ * [DailyselfieDemo](https://github.com/weixsong/libra#dailyselfiedemo)
+
 # IDE Setup
 Currently Android Studio is famous for Android App development, But I'm not familiar with Android Stduio, so I'm still using Eclipse + ADT(Android Development Tools) to develop Android app. All the following setup instructions are based on Eclipse + ADT. If you're using Android Studio, please check out how to setup the IDE and help to updae this instructions.
 
