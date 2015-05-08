@@ -48,26 +48,38 @@ Then, you could build the NDKDemo project and run it on your mobile phone or AVD
 If you encounter some problem, please goto http://blog.csdn.net/watkinsong/article/details/9849973 for more information.
 
 # ASMAndroidDemo
-This project combined native c/cpp code and opencv java SDK to do ASM points location and face detection.
+This project combined native c/c++ code and OpenCV java SDK (OpenCV4Android) to do ASM (Active Shape Model) points location and face detection.
 ASMAndroidDemo defaultly use back camera, just because I don't have enough time to add function to call 
 from camera.
 
-ASMAndroidDemo is doning camera preview in customized SurfaceView, which run in isolated thread, and doing 
-canny edge detection in UI thread, and doing face detection in a new thread, then, right now most of Android 
+ASMAndroidDemo is doing camera preview in customized SurfaceView, which run in isolated thread, and doing 
+canny edge detection in UI thread, and doing face detection in a new thread, then, currently most of Android 
 phone is 4 cores cpu, then compute burden could be distributed into each cpu core.
 
 In this project, ASM points location is done by native c/c++ code, and because ASM really cost a longer time to 
 compute the points location, so ASM computation will be done in AsyncTask, this method will not block the UI
 thread and will not cause an ANR error of Android.
 
-For Canny Edge detect, face detection, here default parameters are used, actually these parameters should be configurate
-by user, but no time for me.
+For Canny Edge detect, face detection, here default parameters are used, actually these parameters should be configurated by user, but no time for me.
 
 Actually the orginal project of this demo that I developed one year ago support both front camera and back camera,
-and user could config to choose camera and choose use native c/c++ code or opencv4android java SDK, but now I don't
-have enough time, so here just developed a working demo, someone interested about this project could fork it and 
-improve it.
+and user could config to choose camera and choose use native c/c++ code or opencv4android java SDK, but now I don't have enough time, so here just developed a working demo, someone interested about this project could fork it and improve it.
 
+Setup this project:
+ * 1. Goto https://github.com/weixsong/libra/blob/master/README.md#ide-setup, and following the instructions to setup IDE.
+ * 2. Import this project by Eclipse.
+ * 3. Open the property of this project, click C/C++ Build -> Envrionment, change variable NDKROOT to your NDK root path. Such as : /home/wesong/software/android-ndk-r10d
+ * 4. Import Opencv4Android into your Eclipse.
+ * 5. Open the property of this project, click Android, and delete the default library reference, add your Opencv4Android library reference. (Pointing to the OpenCV4Android project)
+ * 6. Still open the property, click C/C++ General -> Path and Symbols, in the include tab, select GNU C++, and find the variable such as "home/wesong/software/OpenCV-2.4.10-android-sdk/sdk/native/jni/include", change this include directories to the OpenCV-2.4.10-android-sdk/sdk/native/jni/include of your opencv4android folder, this will make Eclipse be able to find the head files of opencv.
+ * 7. Other include directories you need to pay attentation are:
+    + ${NDKROOT}/platforms/android-21/arch-arm/usr/include
+    + ${NDKROOT}/sources/cxx-stl/gnu-libstdc++/4.9/include
+    + ${NDKROOT}/sources/cxx-stl/gnu-libstdc++/4.9/libs/armeabi-v7a/include/bits
+ * 8. Change Android.mk file, line 8, change the line "include /home/wesong/software/OpenCV-2.4.10-android-sdk/sdk/native/jni/OpenCV.mk" to include your OpenCV.mk, find OpenCV.mk on your OpenCV4Android, and put the path here.
+
+Then, you could build the ASMDemo project and run it on your mobile phone or AVD.
+If you encounter some problem, please goto http://blog.csdn.net/watkinsong/article/details/9849973 for more information.
 
 # OCRDemo
 OCRDemo is an application that shows how to use OCR (Optical Character Recognition) on Android platform.
