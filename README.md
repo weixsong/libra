@@ -74,7 +74,8 @@ and user could config to choose camera and choose use native c/c++ code or openc
 Setup this project:
  * 1. Goto https://github.com/weixsong/libra/blob/master/README.md#ide-setup, and following the instructions to setup IDE.
  * 2. Import this project by Eclipse.
- * 3. Open the property of this project, click C/C++ Build -> Envrionment, change variable NDKROOT to your NDK root path. Such as : /home/wesong/software/android-ndk-r10d
+ * 3. Open the property of this project, click C/C++ Build -> Envrionment, change variable NDKROOT to your NDK root path. Such as : /home/wesong/software/android-ndk-r10d. 
+    If you're using Windows, open the property of NDKDemo project, click C/C++ Build, in Builder setting, change ${NDKROOT}/ndk-build to ${NDKROOT}/ndk-build.cmd
  * 4. Import Opencv4Android into your Eclipse.
  * 5. Open the property of this project, click Android, and delete the default library reference, add your Opencv4Android library reference. (Pointing to the OpenCV4Android project)
  * 6. Still open the property, click C/C++ General -> Path and Symbols, in the include tab, select GNU C++, and find the variable such as "home/wesong/software/OpenCV-2.4.10-android-sdk/sdk/native/jni/include", change this include directories to the OpenCV-2.4.10-android-sdk/sdk/native/jni/include of your opencv4android folder, this will make Eclipse be able to find the head files of opencv.
