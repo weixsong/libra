@@ -18,7 +18,7 @@ This IDE Setup is on the assumption that your want to do NDK development by usin
 If your just want to take a look project OCRDemo, you don't need to do the following setup. In other words, the following non-trivial setup steps are only useful for project NDKDemo and ASMAndroidDemo.
 
 To setup your development environment, please follow the instructions: http://blog.csdn.net/watkinsong/article/details/9849973
-Currently, this instruction is in Chinese, your can try to translate it with Google translator or something. Later I will provide detailed English version. And the following also contains some simple instructions.
+Currently, this instruction is in Chinese, your can try to translate it with Google translator or something. Later I will provide detailed English version. And the following also contains some simple **instructions**.
 
  * 1. Download Eclipse.
  * 2. Install java on your OS(I'm using Ubuntu14.04LTS), and configure the System variables.
@@ -35,7 +35,7 @@ Upto now, the IDE setup is basically done, but if you want to run the following 
 This project shows how to use NDK to develop native c/c++ code that invoked by jni in Android.
 Developed by opencv4android, but only use opencv c/c++ head file.
 
-Setup this project:
+**Setup this project**:
  * 1. Goto https://github.com/weixsong/libra/blob/master/README.md#ide-setup, and following the instructions to setup IDE.
  * 2. Import this NDKDemo project by Eclipse.
  * 3. After imported this project, your may see some errors with this project, don't be afriad, just go to step 4, :).
@@ -51,12 +51,12 @@ Setup this project:
 Then, you could build the NDKDemo project and run it on your mobile phone or AVD.
 If you encounter some problem, please goto http://blog.csdn.net/watkinsong/article/details/9849973 for more information.
 
-# ASMAndroidDemo
+# ASMDemo
 This project combined native c/c++ code and OpenCV java SDK (OpenCV4Android) to do ASM (Active Shape Model) points location and face detection.
-ASMAndroidDemo defaultly use back camera, just because I don't have enough time to add function to call 
+ASMDemo defaultly use back camera, just because I don't have enough time to add function to call 
 from camera.
 
-ASMAndroidDemo is doing camera preview in customized SurfaceView, which run in isolated thread, and doing 
+ASMDemo is doing camera preview in customized SurfaceView, which run in isolated thread, and doing 
 canny edge detection in UI thread, and doing face detection in a new thread, then, currently most of Android 
 phone is 4 cores cpu, then compute burden could be distributed into each cpu core.
 
@@ -69,12 +69,11 @@ For Canny Edge detect, face detection, here default parameters are used, actuall
 Actually the orginal project of this demo that I developed one year ago support both front camera and back camera,
 and user could config to choose camera and choose use native c/c++ code or opencv4android java SDK, but now I don't have enough time, so here just developed a working demo, someone interested about this project could fork it and improve it.
 
-**IMPORTANT**: 
-
+**IMPORTANT**:
 My test devices are RedMi2 and XiaoMi3, the target ABI of these two phones are **armeabi** and **armeabi-v7a**, in order to make this project runable, you need to select correct libopencv_java.so according to your hardware platform, default **target ABI** is **amerabi**, if you are using other hardware platform, checkout what platform you are using and select **libopencv_java.so** from corresponding platform library that Opencv4Android has already built for you.
 Actually I encounted this problem when I install this project on RedMi2 but the **libopencv_java.so** is from other platform **amerabi-v7a**, and I have the runtime error such as java.lang.noclassdeffounderror.
 
-Setup this project:
+**Setup this project**:
  * 1. Goto https://github.com/weixsong/libra/blob/master/README.md#ide-setup, and following the instructions to setup IDE.
  * 2. Import this project by Eclipse.
  * 3. Open the property of this project, click C/C++ Build -> Envrionment, change variable NDKROOT to your NDK root path. Such as : /home/wesong/software/android-ndk-r10d. 
