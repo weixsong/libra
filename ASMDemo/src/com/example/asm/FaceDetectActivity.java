@@ -126,7 +126,7 @@ public class FaceDetectActivity extends Activity implements PreviewCallback,
 		// set preview size and make any resize, rotate or
 		// reformatting changes here
 		int screenWidth = getScreenWidth();
-		CameraUtils.setCameraPreviewParameters(mCamera, screenWidth);
+		CameraUtils.setOptimalCameraPreviewSize(mCamera, screenWidth, screenWidth);
 		cameraPreviewSize = mCamera.getParameters().getPreviewSize();
 
 		// start preview with new settings

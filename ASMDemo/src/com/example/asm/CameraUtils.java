@@ -8,15 +8,15 @@ import android.util.Log;
 
 /**
  * Camera Utility for open camera, check camera, set camera parameters
- *
- * @author intern
- *
+ * 
+ * @author weixsong
  */
 public class CameraUtils {
 	private static String TAG = "com.example.asm.CameraUtils";
+	private static final double RATIO_TOLERANCE = 0.1;
 
-	/** 
-	 * A safe way to get an instance of the Camera object. 
+	/**
+	 * A safe way to get an instance of the Camera object.
 	 */
 	public static Camera getCameraInstance(Context context, int CameraId) {
 		Camera c = null;
@@ -52,32 +52,43 @@ public class CameraUtils {
 	 * rotate the captured image by 90 degrees, so the passed in parameter width
 	 * is used as height no fault. Be noticed.
 	 */
-	public static boolean setCameraPreviewParameters(Camera camera, int width) {
+	public static boolean setOptimalCameraPreviewSize(Camera camera, int width, int height) {
 		if (camera == null) {
 			return false;
 		}
 
+		double targetRatio = (double) height / width;
+
 		Camera.Parameters params = camera.getParameters();
 		List<Camera.Size> sizes = params.getSupportedPreviewSizes();
-		int mFrameWidth = 0;
-		int mFrameHeight = width;
+
+		Camera.Size optimalSize = null;
 
 		// selecting optimal camera preview size
-		{
-			int minDiff = Integer.MAX_VALUE;
-			for (Camera.Size size : sizes) {
-				if (Math.abs(size.height - width) < minDiff) {
-					mFrameWidth = size.width;
-					mFrameHeight = size.height;
-					minDiff = Math.abs(size.height - width);
-				}
+		int minDiff = Integer.MAX_VALUE;
+		for (Camera.Size size : sizes) {
+			double ratio = (double) size.height / size.width;
+			if (Math.abs(ratio - targetRatio) > RATIO_TOLERANCE) continue;
+			if (Math.abs(size.height - height) < minDiff) {
+				optimalSize = size;
+				minDiff = Math.abs(size.height - height);
 			}
 		}
 
-		params.setPreviewSize(mFrameWidth, mFrameHeight);
+        if (optimalSize == null) {
+            minDiff = Integer.MAX_VALUE;
+            for (Camera.Size size : sizes) {
+                if (Math.abs(size.height - height) < minDiff) {
+                    optimalSize = size;
+                    minDiff = Math.abs(size.height - height);
+                }
+            }
+        }
 
-		List<String> FocusModes = params.getSupportedFocusModes();
-		if (FocusModes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO)) {
+		params.setPreviewSize(optimalSize.width, optimalSize.height);
+
+		List<String> focusModes = params.getSupportedFocusModes();
+		if (focusModes.contains(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO)) {
 			params.setFocusMode(Camera.Parameters.FOCUS_MODE_CONTINUOUS_VIDEO);
 		}
 
