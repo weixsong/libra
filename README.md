@@ -3,7 +3,7 @@ This is a super project, contains some image process projects developed in Andro
 In this project, it contains project that show how to use NDK to develop native c/c++ code,
 also it contains project that show how to combine native c/c++ code and java SDK of opencv.
 
-When combined native c/c++ code and java SDK of opencv, NDK will delete the thrid party library automatically in the libs folder, this problem seems does not happen in Windows version of opencv4android, but happens in linux/unix version of opencv4android, and this ugly bug confused me for nearly one day. Finally solved by prebuild library strategy in NDK.
+When combined native c/c++ code and java SDK of opencv, NDK will delete the thrid party library automatically in the libs folder, this problem seems does not happen in Windows version of opencv4android, but happens in linux/unix version of opencv4android, and this ugly bug confused me for nearly one day. Finally solved by prebuild library strategy in NDK. See details in [ASMDemo](https://github.com/weixsong/libra#asmandroiddemo)
 
 Projects in this repo:
  * [NDKDemo](https://github.com/weixsong/libra#ndkdemo)
@@ -68,6 +68,9 @@ For Canny Edge detect, face detection, here default parameters are used, actuall
 
 Actually the orginal project of this demo that I developed one year ago support both front camera and back camera,
 and user could config to choose camera and choose use native c/c++ code or opencv4android java SDK, but now I don't have enough time, so here just developed a working demo, someone interested about this project could fork it and improve it.
+
+**IMPORTANT**: My test devices are RedMi2 and XiaoMi3, the target ABI of these two phones are **armeabi** and **armeabi-v7a**, in order to make this project runable, you need to select correct libopencv_java.so according to your hardware platform, default **target ABI** is **amerabi**, if you are using other hardware platform, checkout what platform you are using and select **libopencv_java.so** from corresponding platform library that Opencv4Android has already built for you.
+Actually I encounted this problem when I install this project on RedMi2 but the **libopencv_java.so** is from other platform **amerabi-v7a**, and I have the runtime error such as java.lang.noclassdeffounderror.
 
 Setup this project:
  * 1. Goto https://github.com/weixsong/libra/blob/master/README.md#ide-setup, and following the instructions to setup IDE.
