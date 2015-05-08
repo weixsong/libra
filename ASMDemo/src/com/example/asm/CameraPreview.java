@@ -15,6 +15,7 @@ public class CameraPreview extends SurfaceView implements
 
 	private SurfaceHolder surfaceHolder;
 	private Camera camera;
+	private Camera.Size optimalSize;
 
 	private Context context;
 
@@ -68,6 +69,7 @@ public class CameraPreview extends SurfaceView implements
 
 		// set preview size and make any resize, rotate or
 		// reformatting changes here
+		optimalSize = CameraUtils.getOptimalCameraPreviewSize(camera, h, w);
 		CameraUtils.setOptimalCameraPreviewSize(camera, h, w);
 
 		// start preview with new settings
@@ -111,23 +113,31 @@ public class CameraPreview extends SurfaceView implements
 	/*
 	 * this will make the preview normal size, but could not center the preview
 	 */
-//	@Override
-//	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-//		Log.d(TAG, "onMeasure");
-//		final int width = resolveSize(getSuggestedMinimumWidth(),
-//				widthMeasureSpec);
-//		final int height = resolveSize(getSuggestedMinimumHeight(),
-//				heightMeasureSpec);
-//
-//		Camera.Size previewSize = camera.getParameters().getPreviewSize();
-//
-//		float ratio;
-//		if (previewSize.height >= previewSize.width) {
-//			ratio = (float) previewSize.height / (float) previewSize.width;
-//			setMeasuredDimension(width, (int) (width * ratio));
-//		} else {
-//			ratio = (float) previewSize.width / (float) previewSize.height;
-//			setMeasuredDimension((int) (width * ratio), height);
-//		}
-//	}
+	@Override
+	protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+		Log.d(TAG, "onMeasure");
+		final int width = resolveSize(getSuggestedMinimumWidth(),
+				widthMeasureSpec);
+		final int height = resolveSize(getSuggestedMinimumHeight(),
+				heightMeasureSpec);
+		
+		if (optimalSize == null) {
+			optimalSize = CameraUtils.getOptimalCameraPreviewSize(camera, height, width);
+		}
+
+		Log.d(TAG, "onMeasure + w:" + width + " h: " + height);
+
+		float ratio;
+		if (optimalSize.height >= optimalSize.width) {
+			ratio = (float) optimalSize.height / (float) optimalSize.width;
+		} else {
+			ratio = (float) optimalSize.width / (float) optimalSize.height;
+		}
+
+		//setMeasuredDimension(width, (int) (width * ratio));
+		setMeasuredDimension((int) (height / ratio), height);
+		Log.d(TAG, "onMeasure resize + w:" + (int) (height / ratio) + " h: " + height);
+		
+		//super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+	}
 }

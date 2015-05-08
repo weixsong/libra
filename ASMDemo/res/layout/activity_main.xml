@@ -13,20 +13,30 @@
         android:gravity="center"
         android:orientation="horizontal" >
 
-        <FrameLayout
-            android:id="@+id/camera_preview"
+        <LinearLayout
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:layout_marginRight="1dp"
             android:layout_gravity="center"
-            android:layout_weight="1" />
+            android:layout_weight="1"
+            android:gravity="center_horizontal"
+            android:orientation="horizontal" >
+
+            <FrameLayout
+                android:background="#aaaaaa"
+                android:id="@+id/camera_preview"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:foregroundGravity="center"
+                android:layout_gravity="center_horizontal" />
+
+        </LinearLayout>
 
         <ImageView
             android:id="@+id/face_detect_img_view"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
-            android:layout_marginLeft="1dp"
             android:layout_weight="1"
+            android:contentDescription="@+id/face_detect_img"
             android:scaleType="centerInside"
             android:src="@android:drawable/sym_def_app_icon" />
     </LinearLayout>
@@ -47,7 +57,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:layout_gravity="center"
-                android:layout_marginRight="1dp"
+                android:layout_marginRight="0dp"
                 android:scaleType="centerInside"
                 android:src="@android:drawable/ic_input_add" />
         </LinearLayout>
@@ -63,7 +73,7 @@
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:layout_gravity="center"
-                android:layout_marginLeft="1dp"
+                android:layout_marginLeft="0dp"
                 android:scaleType="centerInside"
                 android:src="@drawable/tech" />
         </LinearLayout>

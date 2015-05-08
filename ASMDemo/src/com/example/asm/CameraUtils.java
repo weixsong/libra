@@ -99,4 +99,39 @@ public class CameraUtils {
 		camera.setParameters(params);
 		return true;
 	}
+	
+	public static Camera.Size getOptimalCameraPreviewSize(Camera camera, int width, int height) {
+		if (camera == null) {
+			return null;
+		}
+
+		double targetRatio = (double) height / width;
+
+		Camera.Parameters params = camera.getParameters();
+		List<Camera.Size> sizes = params.getSupportedPreviewSizes();
+
+		Camera.Size optimalSize = null;
+
+		// selecting optimal camera preview size
+		int minDiff = Integer.MAX_VALUE;
+		for (Camera.Size size : sizes) {
+			double ratio = (double) size.height / size.width;
+			if (Math.abs(ratio - targetRatio) > RATIO_TOLERANCE) continue;
+			if (Math.abs(size.height - height) < minDiff) {
+				optimalSize = size;
+				minDiff = Math.abs(size.height - height);
+			}
+		}
+
+        if (optimalSize == null) {
+            minDiff = Integer.MAX_VALUE;
+            for (Camera.Size size : sizes) {
+                if (Math.abs(size.height - height) < minDiff) {
+                    optimalSize = size;
+                    minDiff = Math.abs(size.height - height);
+                }
+            }
+        }
+		return optimalSize;
+	}
 }

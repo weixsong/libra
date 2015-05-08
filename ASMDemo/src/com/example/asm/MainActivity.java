@@ -30,9 +30,11 @@ import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 import android.widget.TextView;
 
@@ -121,13 +123,13 @@ public class MainActivity extends Activity implements PreviewCallback {
 				Intent intent = new Intent(MainActivity.this, CannyViewActivity.class);
 				startActivity(intent);
 			}
-			
+
 			if (v == iv_face_detect_img_view && doubleClick) {
 				// start FaceDetectActivity
 				Intent intent = new Intent(MainActivity.this, FaceDetectActivity.class);
 				startActivity(intent);
 			}
-			
+
 			if (v == iv_image_view_asm && doubleClick) {
 				// start AsmViewActivity
 				if (faceFound == false) {
@@ -192,8 +194,16 @@ public class MainActivity extends Activity implements PreviewCallback {
 
 		// Create our Preview view and set it as the content of our activity.
 		mPreview = new CameraPreview(this, mCamera);
-		FrameLayout preview = (FrameLayout) findViewById(R.id.camera_preview);
-		preview.addView(mPreview);
+		FrameLayout previewFrame = (FrameLayout) findViewById(R.id.camera_preview);
+
+//		LinearLayout linearLayout = new LinearLayout(this);
+//		linearLayout.setHorizontalGravity(LinearLayout.HORIZONTAL);
+//		linearLayout.addView(mPreview);
+		//LinearLayout.LayoutParams layoutParams = new LinearLayout.LayoutParams(LayoutParams.WRAP_CONTENT, LayoutParams.WRAP_CONTENT);
+
+		//previewFrame.setLayoutParams(layoutParams);
+
+		previewFrame.addView(mPreview);
 	}
 
 	@Override
@@ -236,6 +246,8 @@ public class MainActivity extends Activity implements PreviewCallback {
 		Mat src = new Mat();
 		Utils.bitmapToMat(bitmap, src);
 		src.copyTo(currentFrame);
+		
+		Log.d("com.example.asm.CameraPreview", "image size: w: " + src.width() + " h: " + src.height());
 
 		// do canny
 		Mat canny_mat = new Mat();
