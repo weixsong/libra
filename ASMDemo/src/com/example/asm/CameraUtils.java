@@ -8,9 +8,9 @@ import android.util.Log;
 
 /**
  * Camera Utility for open camera, check camera, set camera parameters
- * 
+ *
  * @author intern
- * 
+ *
  */
 public class CameraUtils {
 	private static String TAG = "com.example.asm.CameraUtils";
