@@ -7,7 +7,7 @@ When combined native c/c++ code and java SDK of opencv, NDK will delete the thri
 
 Projects in this repo:
  * [NDKDemo](https://github.com/weixsong/libra#ndkdemo)
- * [ASMDemo](https://github.com/weixsong/libra#asmandroiddemo)
+ * [ASMDemo](https://github.com/weixsong/libra#asmdemo)
  * [OCRDemo](https://github.com/weixsong/libra#ocrdemo)
  * [DailyselfieDemo](https://github.com/weixsong/libra#dailyselfiedemo)
 
