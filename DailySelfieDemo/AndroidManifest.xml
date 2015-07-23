@@ -39,7 +39,8 @@
         <service android:enabled="true" android:name=".NotificationService" />
         
         <receiver android:name="com.example.homework.SystemRebootReceiver"
-            android:enabled="true">
+            android:enabled="true"
+            android:exported="true">
             <intent-filter android:priority="1000">
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
